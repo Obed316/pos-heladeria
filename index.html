@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro</title>
+    <title>Heladería POS Sincronizado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -18,9 +18,8 @@
 <body class="p-4 pb-28 text-gray-800">
     <div class="max-w-md mx-auto">
         <header class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black tracking-tight text-gray-900">Heladería</h1>
+            <h1 class="text-2xl font-black tracking-tight text-gray-900">Heladería 🍦</h1>
             <div class="flex gap-2">
-                <button onclick="abrirLealtad()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">🎁</button>
                 <button onclick="abrirHistorialDias()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">📅</button>
                 <button onclick="abrirBitacora()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">📜</button>
                 <button onclick="abrirAjustes()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">⚙️</button>
@@ -66,7 +65,6 @@
             </button>
             <button onclick="abrirVentaLibre()" class="col-span-2 bg-gray-900 text-white p-5 rounded-[22px] btn-press flex justify-between items-center shadow-xl">
                 <span class="font-black text-xs uppercase tracking-widest">➕ Venta Improvisada</span>
-                <span id="clienteActivo" class="text-[10px] font-bold opacity-60">Sin Cliente</span>
             </button>
         </div>
 
@@ -100,7 +98,7 @@
                 <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase tracking-widest">1 / 5</span>
                 <button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black btn-press text-xl">→</button>
             </div>
-            <button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase tracking-widest">Cerrar Caja y Guardar en Excel</button>
+            <button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase tracking-widest">Cerrar Caja y Guardar Día</button>
             <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl font-light">×</button>
         </div>
     </div>
@@ -108,29 +106,26 @@
     <!-- MODALES ADICIONALES -->
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl btn-press text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl btn-press text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl btn-press text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black mt-2">Cancelar</button></div></div></div>
-    <div id="modalLealtad" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-10 shadow-2xl text-center"><h3 class="text-2xl font-black mb-2">Cliente Frecuente</h3><p class="text-xs text-gray-400 mb-8 font-bold">Cada helado es 1 punto</p><input id="telCliente" type="tel" placeholder="Teléfono" class="w-full p-5 bg-gray-100 rounded-2xl mb-4 text-center font-black text-2xl tracking-tighter"><div id="statusLealtad" class="hidden my-6"><div class="text-5xl font-black text-blue-600" id="puntosLabel">0</div><div class="text-[10px] font-black text-gray-300 uppercase mt-2">Puntos Acumulados</div></div><button onclick="buscarCliente()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black mb-2">Registrar / Buscar</button><button onclick="cerrarModal('modalLealtad')" class="w-full py-3 text-gray-300 font-bold">Cerrar</button></div></div>
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto scroll-beauty shadow-2xl"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-6"><label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Nuevo Botón Promo</label><input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 border-0 text-sm font-bold shadow-sm"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 border-0 text-sm font-bold shadow-sm"><button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button></div><div id="listaPromosGestion" class="space-y-2 mb-6"></div><button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold">Regresar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
 
     <script>
-        // PEGA AQUÍ TU URL ENTRE LAS COMILLAS
+        // PEGA TU NUEVA URL AQUÍ ABAJO
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
 
         const tipos = ['V8','C8','V16','C16','V32','C32'];
         let carrito = [];
         let pagActual = 0;
         let descuentoPct = 0;
-        let clienteActual = null;
         let seleccionLibre = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
 
-        let db = JSON.parse(localStorage.getItem('heladeria_v2_final')) || {
+        let db = JSON.parse(localStorage.getItem('heladeria_v3_sync')) || {
             inv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             promo: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             term: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             dinero: { efec:0, term:0, tran:0 },
             bitacora: [],
             promosConfig: [],
-            clientesFrecuentes: {},
             reportesPasados: []
         };
 
@@ -148,19 +143,37 @@
             let b = carrito.reduce((a, b) => a + b.precio, 0);
             let total = b - (b * descuentoPct / 100);
             document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('displayLista').innerText = (descuentoPct > 0 ? `-${descuentoPct}% | ` : '') + (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Carrito vacío");
+            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Carrito vacío");
         }
 
         function finalizar(metodo) {
             let b = carrito.reduce((a, b) => a + b.precio, 0);
-            let total = b - (b * descuentoPct / 100);
+            let totalVenta = b - (b * descuentoPct / 100);
+            const fecha = new Date().toLocaleDateString();
             const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            if(metodo === 'Efectivo') db.dinero.efec += total;
-            else if(metodo === 'Terminal') db.dinero.term += total;
-            else if(metodo === 'Transferencia') db.dinero.tran += total;
+            const detalle = carrito.map(i => i.tipo).join(', ');
 
-            db.bitacora.push({ hora, monto: total, metodo, detalle: carrito.map(i => i.tipo).join(', ') });
+            // 1. SINCRONIZAR VENTA AL EXCEL AL INSTANTE
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipoAccion: "VENTA",
+                    fecha: fecha,
+                    hora: hora,
+                    monto: totalVenta.toFixed(2),
+                    metodo: metodo,
+                    detalle: detalle
+                })
+            });
+
+            // 2. ACTUALIZAR BASE LOCAL
+            if(metodo === 'Efectivo') db.dinero.efec += totalVenta;
+            else if(metodo === 'Terminal') db.dinero.term += totalVenta;
+            else if(metodo === 'Transferencia') db.dinero.tran += totalVenta;
+
+            db.bitacora.push({ hora, monto: totalVenta, metodo, detalle });
 
             carrito.forEach(item => {
                 if(db.inv.hasOwnProperty(item.tipo)) { 
@@ -169,10 +182,9 @@
                 }
                 if(item.receta) { 
                     for(let h in item.receta) { 
-                        let c = item.receta[h]; 
-                        db.inv[h] += c; 
-                        db.promo[h] += c; 
-                        if(metodo === 'Terminal') db.term[h] += c; 
+                        db.inv[h] += item.receta[h]; 
+                        db.promo[h] += item.receta[h]; 
+                        if(metodo === 'Terminal') db.term[h] += item.receta[h]; 
                     } 
                 }
             });
@@ -182,31 +194,24 @@
         }
 
         function abrirConfirmReset() {
-            if(!WEB_APP_URL || WEB_APP_URL.includes("TU_URL")) { alert("Error: No has pegado tu URL de Google Sheets."); return; }
-            if(confirm("¿Cerrar el día y guardar en Excel?")) {
+            if(confirm("¿Cerrar el día y guardar reporte final?")) {
                 const hoy = new Date().toLocaleDateString();
                 const comision = (db.dinero.term * 0.04176);
                 const neto = db.dinero.efec + db.dinero.term + db.dinero.tran - comision;
                 const totalHelados = Object.values(db.inv).reduce((a,b)=>a+b, 0);
 
-                const datosExcel = {
-                    fecha: hoy,
-                    v8: db.inv.V8, c8: db.inv.C8, v16: db.inv.V16, c16: db.inv.C16, v32: db.inv.V32, c32: db.inv.C32,
-                    pv8: db.promo.V8, pc8: db.promo.C8, pv16: db.promo.V16, pc16: db.promo.C16, pv32: db.promo.V32, pc32: db.promo.C32,
-                    tv8: db.term.V8, tc8: db.term.C8, tv16: db.term.V16, tc16: db.term.C16, tv32: db.term.V32, tc32: db.term.C32,
-                    helados: totalHelados,
-                    efectivo: db.dinero.efec.toFixed(2),
-                    terminal: db.dinero.term.toFixed(2),
-                    transf: db.dinero.tran.toFixed(2),
-                    comision: comision.toFixed(2),
-                    neto: neto.toFixed(2)
-                };
-
                 fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosExcel)
+                    body: JSON.stringify({
+                        tipoAccion: "CIERRE",
+                        fecha: hoy,
+                        v8: db.inv.V8, c8: db.inv.C8, v16: db.inv.V16, c16: db.inv.C16, v32: db.inv.V32, c32: db.inv.C32,
+                        pv8: db.promo.V8, pc8: db.promo.C8, pv16: db.promo.V16, pc16: db.promo.C16, pv32: db.promo.V32, pc32: db.promo.C32,
+                        tv8: db.term.V8, tc8: db.term.C8, tv16: db.term.V16, tc16: db.term.C16, tv32: db.term.V32, tc32: db.term.C32,
+                        helados: totalHelados, efectivo: db.dinero.efec.toFixed(2), terminal: db.dinero.term.toFixed(2),
+                        transf: db.dinero.tran.toFixed(2), comision: comision.toFixed(2), neto: neto.toFixed(2)
+                    })
                 }).then(() => {
                     db.reportesPasados.push({ fecha: hoy, total: neto, helados: totalHelados });
                     db.inv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
@@ -215,22 +220,20 @@
                     db.dinero = { efec:0, term:0, tran:0 };
                     db.bitacora = [];
                     guardarDB();
-                    alert("✅ Guardado en Excel correctamente.");
                     location.reload();
-                }).catch(e => alert("Error de conexión: " + e));
+                });
             }
         }
 
-        // FUNCIONES DE APOYO
-        function guardarDB() { localStorage.setItem('heladeria_v2_final', JSON.stringify(db)); }
+        function guardarDB() { localStorage.setItem('heladeria_v3_sync', JSON.stringify(db)); }
         function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
         function abrirResumen() { pagActual = 0; document.getElementById('modalResumen').style.display = 'flex'; renderResumen(); }
         function cambiarPagina(d) { pagActual = Math.max(0, Math.min(4, pagActual + d)); renderResumen(); }
-        function aplicarDescuento(p) { descuentoPct = p; [0,5,10,15].forEach(v => { const b = document.getElementById('dto'+v); b.className = v === p ? "text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-full font-bold shadow-sm" : "text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold"; }); actualizarUI(); }
+        function aplicarDescuento(p) { descuentoPct = p; actualizarUI(); }
         function borrarUltimo() { carrito.pop(); actualizarUI(); }
         function abrirVentaLibre() { seleccionLibre = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 }; document.getElementById('libMonto').value = ""; tipos.forEach(t => document.getElementById('libCount'+t).innerText = 0); document.getElementById('modalVentaLibre').style.display = 'flex'; }
         function cambiarLibre(t, c) { seleccionLibre[t] = Math.max(0, seleccionLibre[t] + c); document.getElementById('libCount'+t).innerText = seleccionLibre[t]; }
-        function confirmarVentaLibre() { const m = parseFloat(document.getElementById('libMonto').value); if(!m || Object.values(seleccionLibre).every(v=>v===0)) return; add("M. Especial", m, {...seleccionLibre}); cerrarModal('modalVentaLibre'); }
+        function confirmarVentaLibre() { const m = parseFloat(document.getElementById('libMonto').value); if(!m) return; add("Especial", m, {...seleccionLibre}); cerrarModal('modalVentaLibre'); }
         function renderResumen() {
             const cont = document.getElementById('resumenContent');
             document.getElementById('pagiLabel').innerText = `Página ${pagActual + 1} / 5`;
@@ -248,7 +251,6 @@
         }
         function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-5 border-l-8 border-blue-500 flex justify-between items-center mb-1"><div><span class="text-[10px] font-black text-blue-400 uppercase">${v.hora}</span><div class="text-lg font-black">$${v.monto.toFixed(2)}</div><div class="text-[10px] text-gray-400 font-bold">${v.detalle}</div></div></div>`; }); }
         function abrirAjustes() { document.getElementById('modalAjustes').style.display = 'flex'; renderListaGestion(); }
-        function abrirLealtad() { document.getElementById('modalLealtad').style.display = 'flex'; }
         function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; const cont = document.getElementById('listaDias'); cont.innerHTML = ""; db.reportesPasados.slice().reverse().forEach(r => { cont.innerHTML += `<div class="bg-gray-100 p-5 rounded-[22px] text-sm mb-2"><div class="font-black text-gray-900">${r.fecha}</div><div class="flex justify-between mt-2 font-bold text-blue-600"><span>$${r.total.toFixed(2)}</span><span>Hels: ${r.helados}</span></div></div>`; }); }
         function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
         function guardarNuevaPromo() { let n = document.getElementById('pNom').value; let p = parseFloat(document.getElementById('pPre').value); if(n && p) { db.promosConfig.push({ nombre: n, precio: p }); guardarDB(); renderPromosMain(); renderListaGestion(); } }
