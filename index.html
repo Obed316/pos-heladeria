@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v7.4</title>
+    <title>Heladería POS Pro v7.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -13,6 +13,8 @@
         .counter-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; font-weight: bold; }
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
+        /* Estilo extra para el inventario */
+        .inv-grande { font-size: 1.5rem !important; font-weight: 900 !important; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
@@ -78,11 +80,13 @@
                 <div class="text-orange-950 font-black text-[9px] uppercase">Choco 16oz</div>
                 <div class="text-xl font-black">$130</div>
             </button>
-            <!-- CAMBIO AQUÍ: VAINILLA 32OZ A $200 -->
+
+            <!-- 1. CAMBIO: PRECIO VAINILLA 32OZ A $200 -->
             <button onclick="add('V32', 200)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-800">
                 <div class="text-blue-800 font-black text-[9px] uppercase">Vainilla 32oz</div>
                 <div class="text-xl font-black">$200</div>
             </button>
+            
             <button onclick="add('C32', 230)" class="apple-card p-4 btn-press text-left border-l-8 border-black">
                 <div class="text-black font-black text-[9px] uppercase">Choco 32oz</div>
                 <div class="text-xl font-black">$230</div>
@@ -109,8 +113,9 @@
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
                 <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
-                <!-- CAMBIO AQUÍ: CANCELAR EN ROJO BRILLANTE -->
-                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-xs tracking-widest">CANCELAR</button>
+                
+                <!-- 2. CAMBIO: LETRAS CANCELAR EN ROJO FUERTE -->
+                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-sm tracking-widest">CANCELAR</button>
             </div>
         </div>
     </div>
@@ -124,13 +129,15 @@
                 <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">1 / 5</span>
                 <button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button>
             </div>
-            <!-- CAMBIO AQUÍ: CERRAR CAJA ROJO Y MÁS GRANDE -->
-            <button onclick="abrirConfirmReset()" class="w-full mt-12 text-lg text-red-600 font-black uppercase tracking-tighter border-2 border-red-100 rounded-2xl py-3">Cerrar Caja y Guardar Día</button>
+            
+            <!-- 4. CAMBIO: BOTÓN CERRAR CAJA EN ROJO Y MÁS GRANDE -->
+            <button onclick="abrirConfirmReset()" class="w-full mt-12 py-4 bg-white border-2 border-red-500 text-red-600 font-black rounded-2xl uppercase text-lg btn-press">Cerrar Caja y Guardar Día</button>
+            
             <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button>
         </div>
     </div>
 
-    <!-- LOS DEMÁS MODALES SE MANTREINEN IGUAL -->
+    <!-- RESTO DE MODALES SIN CAMBIOS SOLICITADOS -->
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-6"><label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nueva Promo</label><input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0"><p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p><div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div><button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button></div><div id="listaPromosGestion" class="space-y-2 mb-6"></div><button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs text-center">Cerrar</button></div></div>
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black mt-2">Cancelar</button></div></div></div>
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
@@ -236,13 +243,15 @@
             const cont = document.getElementById('resumenContent');
             document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
-            // CAMBIO AQUÍ: INVENTARIO TEXTO XL (MUY GRANDE)
-            if(pagActual === 0) h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Real</h4><div class='grid grid-cols-2 gap-2 text-left text-xl'>" + Object.entries(db.inv).filter(e=>e[1]>0).map(e => "<div class='bg-gray-100 p-3 rounded-lg font-black'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 1) h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>En Promo</h4><div class='grid grid-cols-2 gap-2 text-left text-xl'>" + Object.entries(db.promo).filter(e=>e[1]>0).map(e => "<div class='bg-purple-50 p-3 rounded-lg font-black'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 2) h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-2 text-left text-xl'>" + Object.entries(db.term).filter(e=>e[1]>0).map(e => "<div class='bg-orange-50 p-3 rounded-lg font-black'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Bruto</h4><div class='space-y-4 text-3xl font-black'><p>Efec: <b>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
+            
+            // 3. CAMBIO: INVENTARIO CON CLASE "inv-grande" (GIGANTE Y NEGRITA)
+            if(pagActual === 0) h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Real</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.inv).filter(e=>e[1]>0).map(e => "<div class='bg-gray-100 p-4 rounded-xl inv-grande text-black'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 1) h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>En Promo</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.promo).filter(e=>e[1]>0).map(e => "<div class='bg-purple-50 p-4 rounded-xl inv-grande text-purple-900'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 2) h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.term).filter(e=>e[1]>0).map(e => "<div class='bg-orange-50 p-4 rounded-xl inv-grande text-orange-900'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Bruto</h4><div class='space-y-4 text-3xl font-black'><p>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
             else h = "<h4 class='font-black text-red-500 mb-6 uppercase text-xs'>Neto Final</h4><p class='text-5xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p>";
-            cont.innerHTML = h || "Sin datos";
+            
+            cont.innerHTML = h || "Sin datos hoy";
         }
 
         function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-4 border-l-8 border-blue-500 mb-1 text-sm"><b>${v.hora} - $${v.monto.toFixed(2)}</b><br><small>${v.detalle}</small></div>`; }); }
