@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v7.9</title>
+    <title>Heladería POS Pro v7.10</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -14,8 +14,8 @@
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
         
-        /* Tamaño de letra equilibrado para que no se corte */
-        .inv-item { font-size: 1.2rem !important; font-weight: 800 !important; }
+        /* Tamaño de letra del inventario equilibrado */
+        .inv-item { font-size: 1.25rem !important; font-weight: 800 !important; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
@@ -49,6 +49,7 @@
 
         <!-- BOTONES PRODUCTOS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
+            <!-- V32 corregido a $200 -->
             <script>
                 const productos = [
                     {n:'Vainilla 4oz', id:'V4', p:35, c:'blue-300'}, {n:'Choco 4oz', id:'C4', p:35, c:'orange-700'},
@@ -75,29 +76,25 @@
         <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-2xl btn-press z-10 uppercase tracking-widest">Ver Resumen Hoy</button>
     </div>
 
-    <!-- MODAL RESUMEN (REDISEÑADO PARA NO CORTARSE) -->
+    <!-- MODAL RESUMEN -->
     <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden">
             <button onclick="cerrarModal('modalResumen')" class="absolute top-4 right-6 text-gray-300 text-3xl z-10">×</button>
-            
-            <!-- Contenido deslizable del inventario -->
             <div id="resumenContent" class="flex-1 overflow-y-auto px-6 pt-10 pb-4 scroll-beauty"></div>
-            
-            <!-- Footer fijo con navegación y cierre -->
             <div class="p-6 bg-gray-50 border-t rounded-b-[35px]">
                 <div class="flex justify-between items-center mb-4 px-4">
                     <button onclick="cambiarPagina(-1)" class="bg-white shadow-sm p-3 rounded-full font-black text-xl btn-press">←</button>
                     <span id="pagiLabel" class="font-black text-gray-400 text-[10px] uppercase tracking-widest">Pág 1 / 5</span>
                     <button onclick="cambiarPagina(1)" class="bg-white shadow-sm p-3 rounded-full font-black text-xl btn-press">→</button>
                 </div>
-                <button onclick="abrirConfirmReset()" class="w-full py-4 border-2 border-red-500 text-red-600 font-black rounded-2xl uppercase text-base tracking-tighter btn-press">
+                <button onclick="abrirConfirmReset()" class="w-full py-4 border-2 border-red-500 text-red-600 font-extrabold rounded-2xl uppercase text-base tracking-tighter btn-press">
                     Cerrar Caja y Guardar Día
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- OTROS MODALES -->
+    <!-- MODAL VENTA LIBRE (FIXED: Ahora muestra los helados siempre) -->
     <div id="modalVentaLibre" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-8 pb-2 text-center"><h3 class="text-2xl font-black">Venta Especial</h3></div>
@@ -105,11 +102,12 @@
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
                 <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
-                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-xs">CANCELAR</button>
+                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-xs tracking-widest text-center">CANCELAR</button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL AJUSTES -->
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty flex flex-col">
             <h3 class="text-2xl font-black mb-6 text-center">Ajustes</h3>
@@ -133,6 +131,27 @@
             inv: {}, promo: {}, term: {}, dinero: { efec:0, term:0, tran:0 }, bitacora: [], promosConfig: [], reportesPasados: []
         };
         tipos.forEach(t => { if (db.inv[t] === undefined) db.inv[t] = 0; if (db.promo[t] === undefined) db.promo[t] = 0; if (db.term[t] === undefined) db.term[t] = 0; });
+
+        function renderContadores() {
+            const cL = document.getElementById('contenedorContadores');
+            const cP = document.getElementById('contadoresPromo');
+            if(!cL || !cP) return;
+            cL.innerHTML = ""; cP.innerHTML = "";
+            tipos.forEach(t => {
+                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl"><span class="font-black text-gray-700">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
+                cP.innerHTML += `<div class="bg-white p-2 rounded-xl border flex items-center justify-between"><span class="text-[10px] font-black text-gray-400">${t}</span><div class="flex items-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)">-</button><span id="receta${t}">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500">+</button></div></div>`;
+            });
+        }
+
+        function abrirVentaLibre() { 
+            renderContadores(); // FORZAMOS EL DIBUJO DE LOS HELADOS AQUÍ
+            tipos.forEach(t => { 
+                seleccionLibre[t]=0; 
+                if(document.getElementById('libCount'+t)) document.getElementById('libCount'+t).innerText=0; 
+            }); 
+            document.getElementById('libMonto').value=""; 
+            document.getElementById('modalVentaLibre').style.display='flex'; 
+        }
 
         function add(tipo, precio, receta = null) { carrito.push({ tipo, precio: Number(precio), receta }); actualizarUI(); }
         function actualizarUI() {
@@ -180,17 +199,8 @@
         function cambiarPagina(d) { pagActual = Math.max(0, Math.min(4, pagActual + d)); renderResumen(); }
         function abrirResumen() { pagActual = 0; document.getElementById('modalResumen').style.display = 'flex'; renderResumen(); }
         function abrirAjustes() { document.getElementById('modalAjustes').style.display = 'flex'; renderListaGestion(); renderContadores(); }
-        function renderContadores() {
-            const cL = document.getElementById('contenedorContadores'); const cP = document.getElementById('contadoresPromo');
-            cL.innerHTML = ""; cP.innerHTML = "";
-            tipos.forEach(t => {
-                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl"><span class="font-black text-gray-700">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn">-</button><span id="libCount${t}" class="font-black">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
-                cP.innerHTML += `<div class="bg-white p-2 rounded-xl border flex items-center justify-between"><span class="text-[10px] font-black">${t}</span><div class="flex items-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)">-</button><span id="receta${t}">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500">+</button></div></div>`;
-            });
-        }
         function cambiarLibre(t, c) { seleccionLibre[t] = Math.max(0, seleccionLibre[t] + c); if(document.getElementById('libCount'+t)) document.getElementById('libCount'+t).innerText = seleccionLibre[t]; }
         function cambiarRecetaPromo(t, c) { recetaPromoNueva[t] = Math.max(0, recetaPromoNueva[t] + c); document.getElementById('receta'+t).innerText = recetaPromoNueva[t]; }
-        function abrirVentaLibre() { tipos.forEach(t => { seleccionLibre[t]=0; if(document.getElementById('libCount'+t)) document.getElementById('libCount'+t).innerText=0; }); document.getElementById('libMonto').value=""; document.getElementById('modalVentaLibre').style.display='flex'; }
         function confirmarVentaLibre() { const m = parseFloat(document.getElementById('libMonto').value); if(!m) return; add("Especial", m, {...seleccionLibre}); cerrarModal('modalVentaLibre'); }
         function abrirConfirmReset() { if(confirm("¿Cerrar día?")){ db.reportesPasados.push({fecha: new Date().toLocaleDateString(), total: (db.dinero.efec+db.dinero.term+db.dinero.tran)}); db.inv={}; db.promo={}; db.term={}; db.dinero={efec:0,term:0,tran:0}; db.bitacora=[]; guardarDB(); location.reload(); } }
         function aplicarDescuento(p) { descuentoPct = p; actualizarUI(); }
@@ -205,8 +215,9 @@
         renderPromosMain();
     </script>
 
-    <!-- MODALES DE PAGO Y BITACORA RESTANTES -->
+    <!-- MODALES DE PAGO Y BITACORA -->
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 text-center uppercase">Cancelar</button></div></div></div>
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4 text-center">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6 text-center">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
 </body>
+</html>
