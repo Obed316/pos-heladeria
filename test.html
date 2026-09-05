@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Heladería POS Pro v7.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .apple-card { background: white; border-radius: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .btn-press:active { transform: scale(0.96); background-color: #e5e5ea; }
+        .modal-bg { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
+        .counter-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 10px; font-weight: bold; }
+        .scroll-beauty::-webkit-scrollbar { width: 4px; }
+        .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 pb-28 text-gray-800">
+    <div class="max-w-md mx-auto">
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black tracking-tight text-gray-900">Heladería 🍦</h1>
+            <div class="flex gap-2">
+                <button onclick="abrirHistorialDias()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">📅</button>
+                <button onclick="abrirBitacora()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">📜</button>
+                <button onclick="abrirAjustes()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">⚙️</button>
+            </div>
+        </header>
+
+        <!-- PANTALLA DE TOTAL -->
+        <div class="apple-card p-8 mb-6 text-center border-b-4 border-blue-500">
+            <span class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] block mb-2">Total de la Venta</span>
+            <div id="displayTotal" class="text-6xl font-black my-2 text-gray-900 tracking-tighter">$0.00</div>
+            <div id="displayLista" class="text-gray-400 text-xs font-medium h-4 truncate italic">Esperando productos...</div>
+            
+            <div class="flex justify-center gap-2 mt-6">
+                <button onclick="aplicarDescuento(0)" id="dto0" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-full font-bold shadow-sm">Normal</button>
+                <button onclick="aplicarDescuento(5)" id="dto5" class="text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold">-5%</button>
+                <button onclick="aplicarDescuento(10)" id="dto10" class="text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold">-10%</button>
+                <button onclick="aplicarDescuento(15)" id="dto15" class="text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold">-15%</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-6">
+                <button onclick="abrirPago()" class="bg-green-500 text-white font-black py-5 rounded-[20px] btn-press shadow-lg shadow-green-200 text-lg uppercase tracking-widest">Cobrar</button>
+                <button onclick="borrarUltimo()" class="bg-gray-100 text-gray-500 font-bold py-5 rounded-[20px] btn-press text-2xl">←</button>
+            </div>
+        </div>
+
+        <!-- BOTONES DE PRODUCTOS -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <!-- 4 Ounces -->
+            <button onclick="add('V4', 35)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-300">
+                <div class="text-blue-400 font-black text-[9px] uppercase">Vainilla 4oz</div>
+                <div class="text-xl font-black">$35</div>
+            </button>
+            <button onclick="add('C4', 35)" class="apple-card p-4 btn-press text-left border-l-8 border-orange-700">
+                <div class="text-orange-700 font-black text-[9px] uppercase">Choco 4oz</div>
+                <div class="text-xl font-black">$35</div>
+            </button>
+            
+            <!-- 6 Ounces -->
+            <button onclick="add('V6', 45)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-400">
+                <div class="text-blue-500 font-black text-[9px] uppercase">Vainilla 6oz</div>
+                <div class="text-xl font-black">$45</div>
+            </button>
+            <button onclick="add('C6', 45)" class="apple-card p-4 btn-press text-left border-l-8 border-orange-800">
+                <div class="text-orange-800 font-black text-[9px] uppercase">Choco 6oz</div>
+                <div class="text-xl font-black">$45</div>
+            </button>
+
+            <!-- 8 Ounces -->
+            <button onclick="add('V8', 60)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-500">
+                <div class="text-blue-500 font-black text-[9px] uppercase">Vainilla 8oz</div>
+                <div class="text-xl font-black">$60</div>
+            </button>
+            <button onclick="add('C8', 60)" class="apple-card p-4 btn-press text-left border-l-8 border-orange-900">
+                <div class="text-orange-900 font-black text-[9px] uppercase">Choco 8oz</div>
+                <div class="text-xl font-black">$60</div>
+            </button>
+
+            <!-- 16 Ounces -->
+            <button onclick="add('V16', 110)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-600">
+                <div class="text-blue-600 font-black text-[9px] uppercase">Vainilla 16oz</div>
+                <div class="text-xl font-black">$110</div>
+            </button>
+            <button onclick="add('C16', 130)" class="apple-card p-4 btn-press text-left border-l-8 border-orange-950">
+                <div class="text-orange-950 font-black text-[9px] uppercase">Choco 16oz</div>
+                <div class="text-xl font-black">$130</div>
+            </button>
+
+            <!-- 32 Ounces -->
+            <button onclick="add('V32', 210)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-800">
+                <div class="text-blue-800 font-black text-[9px] uppercase">Vainilla 32oz</div>
+                <div class="text-xl font-black">$210</div>
+            </button>
+            <button onclick="add('C32', 230)" class="apple-card p-4 btn-press text-left border-l-8 border-black">
+                <div class="text-black font-black text-[9px] uppercase">Choco 32oz</div>
+                <div class="text-xl font-black">$230</div>
+            </button>
+
+            <button onclick="abrirVentaLibre()" class="col-span-2 bg-gray-900 text-white p-5 rounded-[22px] btn-press flex justify-between items-center shadow-xl">
+                <span class="font-black text-xs uppercase tracking-widest">➕ Venta Improvisada</span>
+            </button>
+        </div>
+
+        <!-- PROMOCIONES CREABLES -->
+        <div id="gridPromos" class="grid grid-cols-1 gap-3"></div>
+
+        <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-2xl btn-press z-10 uppercase tracking-widest">Ver Resumen Hoy</button>
+    </div>
+
+    <!-- MODAL VENTA LIBRE -->
+    <div id="modalVentaLibre" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-8 pb-2 border-b text-center">
+                <h3 class="text-2xl font-black">Venta Improvisada</h3>
+                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-widest">Ajusta las cantidades</p>
+            </div>
+            <div id="contenedorContadores" class="flex-1 overflow-y-auto p-8 space-y-3 scroll-beauty"></div>
+            <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
+                <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
+                <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
+                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-gray-400 font-bold mt-1 uppercase text-xs">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AJUSTES -->
+    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-6"><label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nuevo Botón Promo</label><input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 shadow-sm border-0 font-bold"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 shadow-sm border-0 font-bold"><p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Helados que descuenta)</p><div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div><button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button></div><div id="listaPromosGestion" class="space-y-2 mb-6"></div><button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs">Cerrar</button></div></div>
+
+    <!-- OTROS MODALES (Sin cambios estructurales necesarios, solo se actualizan por JS) -->
+    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center"><div id="resumenContent" class="min-h-[300px] flex flex-col justify-center text-sm"></div><div class="flex justify-between items-center mt-8 px-2"><button onclick="cambiarPagina(-1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">←</button><span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">1 / 5</span><button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button></div><button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase">Cerrar Caja y Guardar Día</button><button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button></div></div>
+    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black mt-2">Cancelar</button></div></div></div>
+    <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
+    <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
+
+    <script>
+        // --- CONFIGURACIÓN DE TIPOS ---
+        const tipos = ['V4','C4','V6','C6','V8','C8','V16','C16','V32','C32'];
+        
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
+
+        let carrito = [];
+        let pagActual = 0;
+        let descuentoPct = 0;
+        let seleccionLibre = {};
+        let recetaPromoNueva = {};
+        
+        // Inicializar objetos basados en tipos
+        tipos.forEach(t => { seleccionLibre[t] = 0; recetaPromoNueva[t] = 0; });
+
+        let db = JSON.parse(localStorage.getItem('heladeria_v7_final')) || {
+            inv: {}, promo: {}, term: {},
+            dinero: { efec:0, term:0, tran:0 },
+            bitacora: [],
+            promosConfig: [],
+            reportesPasados: []
+        };
+
+        // Asegurar que todas las medidas existan en la DB
+        tipos.forEach(t => {
+            if (db.inv[t] === undefined) db.inv[t] = 0;
+            if (db.promo[t] === undefined) db.promo[t] = 0;
+            if (db.term[t] === undefined) db.term[t] = 0;
+        });
+
+        function renderContadores() {
+            const cL = document.getElementById('contenedorContadores');
+            const cP = document.getElementById('contadoresPromo');
+            cL.innerHTML = ""; cP.innerHTML = "";
+            tipos.forEach(t => {
+                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl"><span class="font-black text-gray-700 text-lg">${t}</span><div class="flex items-center gap-6"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black w-4 text-center text-xl">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
+                cP.innerHTML += `<div class="text-center bg-white p-2 rounded-xl shadow-sm border"><div class="text-[9px] font-black mb-1">${t}</div><div class="flex items-center justify-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)" class="font-bold text-gray-300">-</button><span id="receta${t}" class="text-xs font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="font-bold text-blue-500">+</button></div></div>`;
+            });
+        }
+
+        function add(tipo, precio, receta = null) {
+            carrito.push({ tipo, precio: Number(precio), receta });
+            actualizarUI();
+        }
+
+        function agregarPromoPorIndice(idx) {
+            const p = db.promosConfig[idx];
+            if (p) add(p.nombre, p.precio, p.receta);
+        }
+
+        function actualizarUI() {
+            let base = carrito.reduce((a, b) => a + Number(b.precio), 0);
+            let total = base - (base * descuentoPct / 100);
+            document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Carrito vacío");
+        }
+
+        function finalizar(metodo) {
+            let base = carrito.reduce((a, b) => a + Number(b.precio), 0);
+            let totalV = base - (base * descuentoPct / 100);
+            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const detalle = carrito.map(i => i.tipo).join(', ');
+
+            if(metodo === 'Efectivo') db.dinero.efec += totalV;
+            else if(metodo === 'Terminal') db.dinero.term += totalV;
+            else if(metodo === 'Transferencia') db.dinero.tran += totalV;
+
+            db.bitacora.push({ hora, monto: totalV, metodo, detalle });
+
+            carrito.forEach(item => {
+                if(db.inv.hasOwnProperty(item.tipo)) { 
+                    db.inv[item.tipo]++; 
+                    if(metodo === 'Terminal') db.term[item.tipo]++;
+                }
+                if(item.receta) { 
+                    for(let h in item.receta) { 
+                        let c = item.receta[h];
+                        db.inv[h] += c; db.promo[h] += c; 
+                        if(metodo === 'Terminal') db.term[h] += c; 
+                    } 
+                }
+            });
+
+            guardarDB(); carrito = []; descuentoPct = 0; actualizarUI(); cerrarModal('modalPago');
+        }
+
+        function abrirConfirmReset() {
+            if(confirm("¿Cerrar el día y guardar reporte final?")) {
+                const hoy = new Date().toLocaleDateString();
+                const neto = db.dinero.efec + db.dinero.term + db.dinero.tran;
+                const totalH = Object.values(db.inv).reduce((a,b)=>a+b, 0);
+                db.reportesPasados.push({ fecha: hoy, total: neto, helados: totalH });
+                
+                // Reset de datos
+                tipos.forEach(t => { db.inv[t]=0; db.promo[t]=0; db.term[t]=0; });
+                db.dinero = { efec:0, term:0, tran:0 }; db.bitacora = [];
+                guardarDB(); location.reload();
+            }
+        }
+
+        function cambiarRecetaPromo(t, c) { recetaPromoNueva[t] = Math.max(0, recetaPromoNueva[t] + c); document.getElementById('receta'+t).innerText = recetaPromoNueva[t]; }
+        
+        function guardarNuevaPromo() {
+            let n = document.getElementById('pNom').value;
+            let p = document.getElementById('pPre').value;
+            if(n && p) {
+                db.promosConfig.push({ nombre: n, precio: Number(p), receta: {...recetaPromoNueva} });
+                tipos.forEach(t => recetaPromoNueva[t] = 0);
+                guardarDB(); renderPromosMain(); renderListaGestion(); renderContadores();
+                document.getElementById('pNom').value = ""; document.getElementById('pPre').value = "";
+            }
+        }
+
+        function renderPromosMain() {
+            const g = document.getElementById('gridPromos'); g.innerHTML = "";
+            db.promosConfig.forEach((p, idx) => {
+                g.innerHTML += `<button onclick="agregarPromoPorIndice(${idx})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm"><span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${Number(p.precio).toFixed(2)}</b></button>`;
+            });
+        }
+
+        function renderListaGestion() {
+            const l = document.getElementById('listaPromosGestion'); l.innerHTML = "";
+            db.promosConfig.forEach((p, i) => {
+                l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl mb-1"><span class="text-xs font-bold">${p.nombre} ($${p.precio})</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black px-2">×</button></div>`;
+            });
+        }
+
+        function cambiarLibre(t, c) { seleccionLibre[t] = Math.max(0, seleccionLibre[t] + c); document.getElementById('libCount'+t).innerText = seleccionLibre[t]; }
+        function confirmarVentaLibre() { const m = parseFloat(document.getElementById('libMonto').value); if(!m) return; add("Especial", m, {...seleccionLibre}); cerrarModal('modalVentaLibre'); }
+        function guardarDB() { localStorage.setItem('heladeria_v7_final', JSON.stringify(db)); }
+        function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+        function abrirResumen() { pagActual = 0; document.getElementById('modalResumen').style.display = 'flex'; renderResumen(); }
+        function cambiarPagina(d) { pagActual = Math.max(0, Math.min(4, pagActual + d)); renderResumen(); }
+        function aplicarDescuento(p) { descuentoPct = p; actualizarUI(); }
+        function borrarUltimo() { carrito.pop(); actualizarUI(); }
+        function abrirVentaLibre() { tipos.forEach(t => { seleccionLibre[t] = 0; document.getElementById('libCount'+t).innerText = 0; }); document.getElementById('libMonto').value = ""; document.getElementById('modalVentaLibre').style.display = 'flex'; }
+        
+        function renderResumen() {
+            const cont = document.getElementById('resumenContent');
+            document.getElementById('pagiLabel').innerText = `Pág ${pagActual + 1} / 5`;
+            let h = "";
+            if(pagActual === 0) h = `<h4 class="font-black text-blue-500 mb-4 uppercase text-xs">Inventario Vendido</h4><div class="grid grid-cols-2 gap-2 text-left">` + Object.entries(db.inv).filter(([k,v])=>v>0).map(([k,v]) => `<div class="bg-gray-50 p-2 rounded-lg font-bold">${k}: <b class="text-blue-600">${v}</b></div>`).join('') + `</div>`;
+            else if(pagActual === 1) h = `<h4 class="font-black text-purple-500 mb-4 uppercase text-xs">En Promoción</h4><div class="grid grid-cols-2 gap-2 text-left">` + Object.entries(db.promo).filter(([k,v])=>v>0).map(([k,v]) => `<div class="bg-gray-50 p-2 rounded-lg font-bold">P-${k}: <b class="text-purple-600">${v}</b></div>`).join('') + `</div>`;
+            else if(pagActual === 2) h = `<h4 class="font-black text-orange-500 mb-4 uppercase text-xs">Vendido Tarjeta</h4><div class="grid grid-cols-2 gap-2 text-left">` + Object.entries(db.term).filter(([k,v])=>v>0).map(([k,v]) => `<div class="bg-gray-50 p-2 rounded-lg font-bold">T-${k}: <b class="text-orange-600">${v}</b></div>`).join('') + `</div>`;
+            else if(pagActual === 3) h = `<h4 class="font-black text-green-500 mb-8 uppercase text-xs">Caja Bruta</h4><div class="space-y-4 text-2xl"><div class="flex justify-between border-b pb-2"><span>Efectivo</span> <b>$${db.dinero.efec.toFixed(2)}</b></div><div class="flex justify-between border-b pb-2"><span>Terminal</span> <b>$${db.dinero.term.toFixed(2)}</b></div><div class="flex justify-between text-gray-400"><span>Transf.</span> <b>$${db.dinero.tran.toFixed(2)}</b></div></div>`;
+            else {
+                let com = (db.dinero.term * 0.04176); 
+                let total = db.dinero.efec + db.dinero.term + db.dinero.tran;
+                h = `<h4 class="font-black text-red-500 mb-6 uppercase text-xs">Cierre Neto</h4><div class="space-y-3 text-left"><div class="flex justify-between text-sm text-red-500 font-bold"><span>Comisión IVA</span> <b>-$${com.toFixed(2)}</b></div><div class="flex justify-between text-4xl font-black pt-4 text-green-600"><span>NETO:</span> <b>$${(total - com).toFixed(2)}</b></div></div>`;
+            }
+            cont.innerHTML = h || "<p class="text-gray-400">Sin datos hoy</p>";
+        }
+        
+        function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-5 border-l-8 border-blue-500 flex justify-between items-center mb-1"><div><span class="text-[10px] font-black text-blue-400 uppercase">${v.hora}</span><div class="text-lg font-black">$${v.monto.toFixed(2)}</div><div class="text-[10px] text-gray-400 font-bold">${v.detalle}</div></div></div>`; }); }
+        function abrirAjustes() { document.getElementById('modalAjustes').style.display = 'flex'; renderListaGestion(); renderContadores(); }
+        function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; const cont = document.getElementById('listaDias'); cont.innerHTML = ""; db.reportesPasados.slice().reverse().forEach(r => { cont.innerHTML += `<div class="bg-gray-100 p-5 rounded-[22px] text-sm mb-2"><div class="font-black text-gray-900">${r.fecha}</div><div class="flex justify-between mt-2 font-bold text-blue-600"><span>$${r.total.toFixed(2)}</span><span>Hels: ${r.helados}</span></div></div>`; }); }
+        function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
+        
+        renderContadores();
+        renderPromosMain();
+    </script>
+</body>
+</html>
