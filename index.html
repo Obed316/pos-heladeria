@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v7.7</title>
+    <title>Heladería POS Pro v7.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -13,8 +13,9 @@
         .counter-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; font-weight: bold; }
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
-        /* Letras del inventario GIGANTES */
-        .inv-item { font-size: 1.85rem !important; font-weight: 900 !important; line-height: 1; }
+        
+        /* Letras del inventario: Tamaño corregido (Grande pero equilibrado) */
+        .inv-item { font-size: 1.4rem !important; font-weight: 800 !important; line-height: 1.2; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
@@ -28,7 +29,7 @@
             </div>
         </header>
 
-        <!-- TOTAL DISPLAY -->
+        <!-- PANTALLA TOTAL -->
         <div class="apple-card p-8 mb-6 text-center border-b-4 border-blue-500">
             <span class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] block mb-2">Total de la Venta</span>
             <div id="displayTotal" class="text-6xl font-black my-2 text-gray-900 tracking-tighter">$0.00</div>
@@ -46,7 +47,7 @@
             </div>
         </div>
 
-        <!-- PRODUCTOS -->
+        <!-- BOTONES PRODUCTOS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
             <button onclick="add('V4', 35)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-300">
                 <div class="text-blue-400 font-black text-[9px] uppercase">Vainilla 4oz</div>
@@ -98,61 +99,61 @@
         <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-2xl btn-press z-10 uppercase tracking-widest">Ver Resumen Hoy</button>
     </div>
 
+    <!-- MODAL RESUMEN (AJUSTADO PARA NO CORTARSE) -->
+    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl relative flex flex-col max-h-[90vh]">
+            <!-- Header del modal -->
+            <div class="p-6 pb-2 text-center">
+                <button onclick="cerrarModal('modalResumen')" class="absolute top-4 right-6 text-gray-300 text-3xl">×</button>
+            </div>
+            
+            <!-- Contenido desplazable -->
+            <div id="resumenContent" class="flex-1 overflow-y-auto px-6 py-2 scroll-beauty"></div>
+            
+            <!-- Footer con paginación y botón de cierre -->
+            <div class="p-6 pt-2 text-center bg-white rounded-b-[35px]">
+                <div class="flex justify-between items-center mb-6 px-4">
+                    <button onclick="cambiarPagina(-1)" class="bg-gray-100 p-4 rounded-full font-black text-xl btn-press">←</button>
+                    <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">Pág 1 / 5</span>
+                    <button onclick="cambiarPagina(1)" class="bg-gray-100 p-4 rounded-full font-black text-xl btn-press">→</button>
+                </div>
+                
+                <button onclick="abrirConfirmReset()" class="w-full py-4 border-4 border-red-500 text-red-600 font-extrabold rounded-2xl uppercase text-lg tracking-tighter btn-press mb-2">
+                    CERRAR CAJA Y GUARDAR DÍA
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL VENTA LIBRE -->
     <div id="modalVentaLibre" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-8 pb-2 text-center">
-                <h3 class="text-2xl font-black">Venta Especial</h3>
-                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Selecciona helados y precio</p>
-            </div>
+        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="p-8 pb-2 text-center"><h3 class="text-2xl font-black">Venta Especial</h3></div>
             <div id="contenedorContadores" class="flex-1 overflow-y-auto p-8 space-y-3 scroll-beauty"></div>
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
                 <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
-                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-sm tracking-widest">CANCELAR</button>
+                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-sm">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL AJUSTES (CREAR BOTÓN) -->
+    <!-- MODAL AJUSTES -->
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty flex flex-col">
+        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty flex flex-col">
             <h3 class="text-2xl font-black mb-6 text-center">Configuración</h3>
-            <div class="bg-blue-50 p-6 rounded-[30px] mb-6">
-                <label class="text-[10px] font-black text-blue-400 uppercase block mb-2 text-center">Nueva Promoción / Combo</label>
-                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0 shadow-sm">
-                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0 shadow-sm">
-                
-                <p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p>
-                <div id="contadoresPromo" class="grid grid-cols-2 gap-3 mb-6"></div>
-                
-                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg text-lg">Crear Botón</button>
+            <div class="bg-blue-50 p-5 rounded-[25px] mb-6">
+                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0">
+                <p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta</p>
+                <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-6"></div>
+                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button>
             </div>
-            
             <div id="listaPromosGestion" class="space-y-2 mb-6"></div>
-            
-            <button onclick="cerrarModal('modalAjustes')" class="w-full py-4 text-red-600 font-black mt-2 uppercase text-base tracking-widest">CERRAR</button>
+            <button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-red-600 font-black uppercase text-sm text-center">CERRAR</button>
         </div>
     </div>
 
-    <!-- MODAL RESUMEN (INVENTARIO) -->
-    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center">
-        <div class="bg-white w-full max-w-sm rounded-[40px] p-8 shadow-2xl relative">
-            <div id="resumenContent" class="min-h-[350px] flex flex-col justify-center"></div>
-            
-            <div class="flex justify-between items-center mt-8 px-4">
-                <button onclick="cambiarPagina(-1)" class="bg-gray-100 p-6 rounded-full font-black text-2xl btn-press">←</button>
-                <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase tracking-widest">Pág 1 / 5</span>
-                <button onclick="cambiarPagina(1)" class="bg-gray-100 p-6 rounded-full font-black text-2xl btn-press">→</button>
-            </div>
-            
-            <button onclick="abrirConfirmReset()" class="w-full mt-12 py-5 bg-white border-4 border-red-500 text-red-600 font-black rounded-3xl uppercase text-xl tracking-tighter btn-press">CERRAR CAJA Y GUARDAR DÍA</button>
-            
-            <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-3xl">×</button>
-        </div>
-    </div>
-
-    <!-- PAGO Y BITÁCORA -->
+    <!-- MODALES EXTRAS -->
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 text-center uppercase">Cancelar</button></div></div></div>
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
@@ -182,8 +183,8 @@
             const cP = document.getElementById('contadoresPromo');
             cL.innerHTML = ""; cP.innerHTML = "";
             tipos.forEach(t => {
-                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl"><span class="font-black text-gray-700 text-lg">${t}</span><div class="flex items-center gap-6"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black w-4 text-center text-xl">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
-                cP.innerHTML += `<div class="bg-white p-4 rounded-2xl shadow-sm border flex items-center justify-between"><span class="text-sm font-black text-gray-400">${t}</span><div class="flex items-center gap-3"><button onclick="cambiarRecetaPromo('${t}',-1)" class="text-2xl font-bold text-gray-200"> - </button><span id="receta${t}" class="text-base font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-2xl font-bold text-blue-500"> + </button></div></div>`;
+                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl"><span class="font-black text-gray-700 text-lg">${t}</span><div class="flex items-center gap-6"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black w-4 text-center text-xl">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
+                cP.innerHTML += `<div class="bg-white p-3 rounded-xl border flex items-center justify-between"><span class="text-sm font-black text-gray-400">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarRecetaPromo('${t}',-1)" class="text-2xl text-gray-300">-</button><span id="receta${t}" class="font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-2xl text-blue-500">+</button></div></div>`;
             });
         }
 
@@ -256,30 +257,23 @@
             document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
             
-            // EL INVENTARIO AHORA MUESTRA TODO (INCLUYENDO CEROS)
             if(pagActual === 0) {
-                h = "<h4 class='font-black text-blue-500 mb-6 uppercase text-xs tracking-widest'>Inventario Real</h4><div class='grid grid-cols-2 gap-3 text-left'>";
-                tipos.forEach(t => {
-                    h += `<div class="bg-gray-50 p-5 rounded-3xl inv-item text-black flex items-center justify-center gap-3"><span>${t}:</span><span class="text-blue-600">${db.inv[t] || 0}</span></div>`;
-                });
+                h = "<h4 class='font-black text-blue-500 mb-6 uppercase text-xs tracking-widest text-center'>Inventario Real</h4><div class='grid grid-cols-2 gap-3 text-left'>";
+                tipos.forEach(t => { h += `<div class="bg-gray-50 p-4 rounded-2xl inv-item text-black text-center"><b>${t}:</b> <span class="text-blue-600">${db.inv[t] || 0}</span></div>`; });
                 h += "</div>";
             }
             else if(pagActual === 1) {
-                h = "<h4 class='font-black text-purple-500 mb-6 uppercase text-xs tracking-widest'>En Promoción</h4><div class='grid grid-cols-2 gap-3 text-left'>";
-                tipos.forEach(t => {
-                    h += `<div class="bg-purple-50 p-5 rounded-3xl inv-item text-purple-900 flex items-center justify-center gap-2"><span>P-${t}:</span><span>${db.promo[t] || 0}</span></div>`;
-                });
+                h = "<h4 class='font-black text-purple-500 mb-6 uppercase text-xs tracking-widest text-center'>Promoción</h4><div class='grid grid-cols-2 gap-3 text-left'>";
+                tipos.forEach(t => { h += `<div class="bg-purple-50 p-4 rounded-2xl inv-item text-purple-900 text-center"><b>P-${t}:</b> ${db.promo[t] || 0}</div>`; });
                 h += "</div>";
             }
             else if(pagActual === 2) {
-                h = "<h4 class='font-black text-orange-500 mb-6 uppercase text-xs tracking-widest'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-3 text-left'>";
-                tipos.forEach(t => {
-                    h += `<div class="bg-orange-50 p-5 rounded-3xl inv-item text-orange-900 flex items-center justify-center gap-2"><span>T-${t}:</span><span>${db.term[t] || 0}</span></div>`;
-                });
+                h = "<h4 class='font-black text-orange-500 mb-6 uppercase text-xs tracking-widest text-center'>Tarjeta</h4><div class='grid grid-cols-2 gap-3 text-left'>";
+                tipos.forEach(t => { h += `<div class="bg-orange-50 p-4 rounded-2xl inv-item text-orange-900 text-center"><b>T-${t}:</b> ${db.term[t] || 0}</div>`; });
                 h += "</div>";
             }
-            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-10 uppercase text-xs tracking-widest'>Caja Bruta</h4><div class='space-y-6 text-4xl font-black'><p>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
-            else h = "<h4 class='font-black text-red-500 mb-8 uppercase text-xs tracking-widest'>Neto Final</h4><p class='text-6xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p>";
+            else if(pagActual === 3) h = "<div class='py-10 text-center'><h4 class='font-black text-green-500 mb-8 uppercase text-xs tracking-widest'>Caja Bruta</h4><p class='text-4xl font-black mb-4'>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p class='text-4xl font-black'>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
+            else h = "<div class='py-10 text-center'><h4 class='font-black text-red-500 mb-8 uppercase text-xs tracking-widest'>Neto Final</h4><p class='text-6xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p></div>";
             
             cont.innerHTML = h;
         }
