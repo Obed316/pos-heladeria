@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS v8.1</title>
+    <title>Heladería POS v8.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -48,7 +48,7 @@
         <!-- PRODUCTOS PRINCIPALES -->
         <div class="grid grid-cols-2 gap-3 mb-6" id="gridMainProductos"></div>
         
-        <!-- PROMOCIONES CREABLES -->
+        <!-- PROMOCIONES -->
         <div id="gridPromos" class="grid grid-cols-1 gap-3 mb-6"></div>
         
         <button onclick="abrirVentaLibre()" class="w-full bg-gray-900 text-white p-5 rounded-[22px] btn-press flex justify-between items-center shadow-xl mb-4">
@@ -94,8 +94,8 @@
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
             <h3 class="text-2xl font-black mb-6 text-center">Configuración</h3>
             <div class="bg-blue-50 p-5 rounded-[25px] mb-6">
-                <input id="pNom" type="text" placeholder="Nombre de Promo" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm">
-                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0 shadow-sm">
+                <input id="pNom" type="text" placeholder="Nombre de Promo" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm text-sm">
+                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0 shadow-sm text-sm">
                 <p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p>
                 <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div>
                 <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black btn-press">Crear Botón</button>
@@ -114,7 +114,7 @@
         </div>
     </div>
 
-    <!-- MODAL HISTORIAL DÍAS -->
+    <!-- MODAL HISTORIAL -->
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl">
             <h3 class="text-2xl font-black mb-6 text-center">Días Pasados</h3>
@@ -138,7 +138,7 @@
 
     <script>
         // --- PEGA TU URL AQUÍ ---
-        const WEB_APP_URL = "URL_DE_TU_SCRIPT_AQUI"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxobkDSb1M8eHAIWv6xpGMZBzRj8jEXViqh1jF4sdYpVxq4SOzjPGI3mLeXnw6ESguJ/exec"; 
         
         const tipos = ['V4','C4','V6','C6','V8','C8','V16','C16','V32','C32'];
         const nombresMap = {
@@ -151,8 +151,7 @@
         tipos.forEach(t => { seleccionLibre[t] = 0; recetaPromoNueva[t] = 0; });
 
         let db = JSON.parse(localStorage.getItem('heladeria_v8_final')) || {
-            inv: {}, promo: {}, term: {}, tran: {}, 
-            dinero: { efec:0, term:0, tran:0 }, bitacora: [], promosConfig: [], reportesPasados: []
+            inv: {}, promo: {}, term: {}, tran: {}, dinero: { efec:0, term:0, tran:0 }, bitacora: [], promosConfig: [], reportesPasados: []
         };
         
         tipos.forEach(t => { 
@@ -217,9 +216,9 @@
             if(confirm("¿Cerrar día y guardar en Google Sheets?")) {
                 const hoy = new Date().toLocaleDateString();
                 let filasParaEnviar = tipos.map(t => {
+                    const total = db.inv[t] || 0;
                     const terminal = db.term[t] || 0;
                     const transfer = db.tran[t] || 0;
-                    const total = db.inv[t] || 0;
                     const efectivo = total - terminal - transfer;
                     return {
                         fecha: hoy, sabor: nombresMap[t.charAt(0)], tamano: nombresMap[t.substring(1)],
@@ -244,7 +243,7 @@
             document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
             if(pagActual === 0) {
-                h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-[10px] text-center tracking-widest'>Inventario Total</h4><div class='grid grid-cols-2 gap-2'>";
+                h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-[10px] text-center tracking-widest'>Inventario Real</h4><div class='grid grid-cols-2 gap-2'>";
                 tipos.forEach(t => { h += `<div class="bg-gray-50 p-2 rounded-xl inv-item text-center"><b>${t}:</b> ${db.inv[t] || 0}</div>`; });
                 h += "</div>";
             } else if(pagActual === 1) {
@@ -265,7 +264,7 @@
             cL.innerHTML = ""; cP.innerHTML = "";
             tipos.forEach(t => {
                 cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl"><span class="font-black text-gray-700">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn">-</button><span id="libCount${t}" class="font-black">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
-                cP.innerHTML += `<div class="bg-white p-2 rounded-xl border flex items-center justify-between"><span class="text-[9px] font-black text-gray-400">${t}</span><div class="flex items-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)">-</button><span id="receta${t}">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500">+</button></div></div>`;
+                cP.innerHTML += `<div class="bg-white p-2 rounded-xl border flex items-center justify-between"><span class="text-[9px] font-black text-gray-400">${t}</span><div class="flex items-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)">-</button><span id="receta${t}" class="text-xs">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500">+</button></div></div>`;
             });
         }
 
@@ -284,7 +283,7 @@
         function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; const cont = document.getElementById('listaDias'); cont.innerHTML = ""; db.reportesPasados.slice().reverse().forEach(r => { cont.innerHTML += `<div class="bg-gray-100 p-4 rounded-xl mb-1 text-xs"><b>${r.fecha}</b> - $${r.total.toFixed(2)}</div>`; }); }
         function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
         function guardarNuevaPromo() { let n = document.getElementById('pNom').value; let p = document.getElementById('pPre').value; if(n && p) { db.promosConfig.push({ nombre: n, precio: Number(p), receta: {...recetaPromoNueva} }); tipos.forEach(t => recetaPromoNueva[t] = 0); guardarDB(); renderPromosMain(); renderListaGestion(); renderContadores(); document.getElementById('pNom').value = ""; document.getElementById('pPre').value = ""; } }
-        function renderPromosMain() { const g = document.getElementById('gridPromos'); g.innerHTML = ""; db.promosConfig.forEach((p, idx) => { g.innerHTML += `<button onclick="add('${p.nombre}', ${p.precio}, ${JSON.stringify(p.receta).replace(/"/g, '&quot;')})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm"><span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${Number(p.precio).toFixed(2)}</b></button>`; }); }
+        function renderPromosMain() { const g = document.getElementById('gridPromos'); g.innerHTML = ""; db.promosConfig.forEach((p, idx) => { g.innerHTML += `<button onclick="add('${p.nombre}', ${p.p}, ${JSON.stringify(p.receta).replace(/"/g, '&quot;')})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm"><span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${Number(p.precio).toFixed(2)}</b></button>`; }); }
         function renderListaGestion() { const l = document.getElementById('listaPromosGestion'); l.innerHTML = ""; db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre}</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">Eliminar</button></div>`; }); }
 
         renderBotonesPrincipales();
