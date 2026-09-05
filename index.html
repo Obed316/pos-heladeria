@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v7.5</title>
+    <title>Heladería POS Pro v7.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -13,8 +13,7 @@
         .counter-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; font-weight: bold; }
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
-        /* Estilo extra para el inventario */
-        .inv-grande { font-size: 1.5rem !important; font-weight: 900 !important; }
+        .inv-grande { font-size: 1.6rem !important; font-weight: 900 !important; line-height: 1.2; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
@@ -80,18 +79,14 @@
                 <div class="text-orange-950 font-black text-[9px] uppercase">Choco 16oz</div>
                 <div class="text-xl font-black">$130</div>
             </button>
-
-            <!-- 1. CAMBIO: PRECIO VAINILLA 32OZ A $200 -->
             <button onclick="add('V32', 200)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-800">
                 <div class="text-blue-800 font-black text-[9px] uppercase">Vainilla 32oz</div>
                 <div class="text-xl font-black">$200</div>
             </button>
-            
             <button onclick="add('C32', 230)" class="apple-card p-4 btn-press text-left border-l-8 border-black">
                 <div class="text-black font-black text-[9px] uppercase">Choco 32oz</div>
                 <div class="text-xl font-black">$230</div>
             </button>
-
             <button onclick="abrirVentaLibre()" class="col-span-2 bg-gray-900 text-white p-5 rounded-[22px] btn-press flex justify-between items-center shadow-xl">
                 <span class="font-black text-xs uppercase tracking-widest">➕ Venta Improvisada</span>
             </button>
@@ -113,14 +108,29 @@
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
                 <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
-                
-                <!-- 2. CAMBIO: LETRAS CANCELAR EN ROJO FUERTE -->
                 <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-600 font-black mt-1 uppercase text-sm tracking-widest">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL RESUMEN -->
+    <!-- MODAL AJUSTES (CORREGIDO) -->
+    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty">
+            <h3 class="text-2xl font-black mb-6 text-center">Ajustes</h3>
+            <div class="bg-blue-50 p-5 rounded-[25px] mb-6">
+                <label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nueva Promo</label>
+                <input id="pNom" type="text" placeholder="Nombre de Botón" class="w-full p-4 rounded-2xl mb-2 font-bold border-0 text-sm">
+                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0 text-sm">
+                <p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p>
+                <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div>
+                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black btn-press">Crear Botón</button>
+            </div>
+            <div id="listaPromosGestion" class="space-y-2 mb-6"></div>
+            <button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs text-center">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL RESUMEN (CORREGIDO FILTRO) -->
     <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center">
             <div id="resumenContent" class="min-h-[300px] flex flex-col justify-center"></div>
@@ -129,22 +139,17 @@
                 <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">1 / 5</span>
                 <button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button>
             </div>
-            
-            <!-- 4. CAMBIO: BOTÓN CERRAR CAJA EN ROJO Y MÁS GRANDE -->
             <button onclick="abrirConfirmReset()" class="w-full mt-12 py-4 bg-white border-2 border-red-500 text-red-600 font-black rounded-2xl uppercase text-lg btn-press">Cerrar Caja y Guardar Día</button>
-            
             <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button>
         </div>
     </div>
 
-    <!-- RESTO DE MODALES SIN CAMBIOS SOLICITADOS -->
-    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-6"><label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nueva Promo</label><input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0"><p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p><div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div><button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button></div><div id="listaPromosGestion" class="space-y-2 mb-6"></div><button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs text-center">Cerrar</button></div></div>
-    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black mt-2">Cancelar</button></div></div></div>
+    <!-- MODALES DE PAGO Y BITACORA -->
+    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 text-center uppercase">Cancelar</button></div></div></div>
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
 
     <script>
-        const WEB_APP_URL = "URL_DE_TU_SCRIPT";
         const tipos = ['V4','C4','V6','C6','V8','C8','V16','C16','V32','C32'];
         let carrito = [];
         let pagActual = 0;
@@ -171,8 +176,8 @@
             const cP = document.getElementById('contadoresPromo');
             cL.innerHTML = ""; cP.innerHTML = "";
             tipos.forEach(t => {
-                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl"><span class="font-black text-gray-700 text-lg">${t}</span><div class="flex items-center gap-6"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black w-4 text-center text-xl">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
-                cP.innerHTML += `<div class="text-center bg-white p-2 rounded-xl shadow-sm border"><div class="text-[9px] font-black mb-1">${t}</div><div class="flex items-center justify-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)">-</button><span id="receta${t}" class="text-[10px] font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500">+</button></div></div>`;
+                cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-2xl"><span class="font-black text-gray-700 text-lg">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn text-gray-300">-</button><span id="libCount${t}" class="font-black w-4 text-center text-xl">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
+                cP.innerHTML += `<div class="bg-white p-2 rounded-xl shadow-sm border flex items-center justify-between"><span class="text-[10px] font-black">${t}</span><div class="flex items-center gap-2"><button onclick="cambiarRecetaPromo('${t}',-1)" class="font-bold text-gray-300">-</button><span id="receta${t}" class="text-[10px] font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500 font-bold">+</button></div></div>`;
             });
         }
 
@@ -224,7 +229,7 @@
         function renderListaGestion() {
             const l = document.getElementById('listaPromosGestion'); l.innerHTML = "";
             db.promosConfig.forEach((p, i) => {
-                l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl mb-1 text-xs"><span>${p.nombre}</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">Eliminar</button></div>`;
+                l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre}</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">Eliminar</button></div>`;
             });
         }
 
@@ -244,14 +249,26 @@
             document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
             
-            // 3. CAMBIO: INVENTARIO CON CLASE "inv-grande" (GIGANTE Y NEGRITA)
-            if(pagActual === 0) h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Real</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.inv).filter(e=>e[1]>0).map(e => "<div class='bg-gray-100 p-4 rounded-xl inv-grande text-black'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 1) h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>En Promo</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.promo).filter(e=>e[1]>0).map(e => "<div class='bg-purple-50 p-4 rounded-xl inv-grande text-purple-900'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 2) h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-4 text-left'>" + Object.entries(db.term).filter(e=>e[1]>0).map(e => "<div class='bg-orange-50 p-4 rounded-xl inv-grande text-orange-900'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Bruto</h4><div class='space-y-4 text-3xl font-black'><p>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
+            // FILTRO ESTRICTO: Solo muestra si el valor es mayor a 0
+            if(pagActual === 0) {
+                let items = Object.entries(db.inv).filter(e => e[1] > 0);
+                h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Vendido</h4>";
+                h += items.length > 0 ? "<div class='grid grid-cols-2 gap-4 text-left'>" + items.map(e => "<div class='bg-gray-100 p-4 rounded-xl inv-grande text-black'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>" : "<p class='text-gray-300 font-bold'>No hay ventas de helados</p>";
+            }
+            else if(pagActual === 1) {
+                let items = Object.entries(db.promo).filter(e => e[1] > 0);
+                h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>Vendido en Promo</h4>";
+                h += items.length > 0 ? "<div class='grid grid-cols-2 gap-4 text-left'>" + items.map(e => "<div class='bg-purple-50 p-4 rounded-xl inv-grande text-purple-900'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>" : "<p class='text-gray-300 font-bold'>Sin promociones usadas</p>";
+            }
+            else if(pagActual === 2) {
+                let items = Object.entries(db.term).filter(e => e[1] > 0);
+                h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido con Tarjeta</h4>";
+                h += items.length > 0 ? "<div class='grid grid-cols-2 gap-4 text-left'>" + items.map(e => "<div class='bg-orange-50 p-4 rounded-xl inv-grande text-orange-900'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>" : "<p class='text-gray-300 font-bold'>Sin cobros por terminal</p>";
+            }
+            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Caja Bruta</h4><div class='space-y-4 text-3xl font-black'><p>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
             else h = "<h4 class='font-black text-red-500 mb-6 uppercase text-xs'>Neto Final</h4><p class='text-5xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p>";
             
-            cont.innerHTML = h || "Sin datos hoy";
+            cont.innerHTML = h;
         }
 
         function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-4 border-l-8 border-blue-500 mb-1 text-sm"><b>${v.hora} - $${v.monto.toFixed(2)}</b><br><small>${v.detalle}</small></div>`; }); }
