@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS v8.3 Final</title>
+    <title>Heladería POS v8.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -13,7 +13,7 @@
         .counter-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; font-weight: bold; }
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
-        .inv-item { font-size: 1.1rem !important; font-weight: 800 !important; }
+        .inv-item { font-size: 1.1rem !important; font-weight: 800 !important; line-height: 1.2; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
@@ -45,7 +45,10 @@
             </div>
         </div>
 
+        <!-- PRODUCTOS PRINCIPALES -->
         <div class="grid grid-cols-2 gap-3 mb-6" id="gridMainProductos"></div>
+        
+        <!-- PROMOCIONES -->
         <div id="gridPromos" class="grid grid-cols-1 gap-3 mb-6"></div>
         
         <button onclick="abrirVentaLibre()" class="w-full bg-gray-900 text-white p-5 rounded-[22px] btn-press flex justify-between items-center shadow-xl mb-4">
@@ -57,7 +60,7 @@
 
     <!-- MODAL RESUMEN -->
     <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden">
+        <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl relative flex flex-col max-h-[85vh] overflow-hidden text-center">
             <button onclick="cerrarModal('modalResumen')" class="absolute top-4 right-6 text-gray-300 text-3xl z-10">×</button>
             <div id="resumenContent" class="flex-1 overflow-y-auto px-4 pt-10 pb-4 scroll-beauty"></div>
             <div class="p-6 bg-gray-50 border-t rounded-b-[35px]">
@@ -66,7 +69,9 @@
                     <span id="pagiLabel" class="font-black text-gray-400 text-[10px] uppercase">Pág 1 / 5</span>
                     <button onclick="cambiarPagina(1)" class="bg-white shadow-sm p-3 rounded-full font-black text-xl btn-press">→</button>
                 </div>
-                <button onclick="abrirConfirmReset()" class="w-full py-4 border-2 border-red-500 text-red-600 font-extrabold rounded-2xl uppercase text-base tracking-tighter btn-press">Cerrar Caja y Guardar Día</button>
+                <button onclick="abrirConfirmReset()" class="w-full py-4 border-2 border-red-500 text-red-600 font-extrabold rounded-2xl uppercase text-base tracking-tighter btn-press">
+                    Cerrar Caja y Guardar Día
+                </button>
             </div>
         </div>
     </div>
@@ -74,7 +79,7 @@
     <!-- MODAL VENTA LIBRE -->
     <div id="modalVentaLibre" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[85vh]">
-            <div class="p-8 pb-2 text-center"><h3 class="text-2xl font-black">Venta Especial</h3></div>
+            <div class="p-8 pb-2 text-center"><h3 class="text-2xl font-black text-gray-800">Venta Especial</h3></div>
             <div id="contenedorContadores" class="flex-1 overflow-y-auto p-8 space-y-2 scroll-beauty"></div>
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
@@ -88,11 +93,12 @@
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
             <h3 class="text-2xl font-black mb-6 text-center text-gray-800">Ajustes</h3>
-            <div class="bg-blue-50 p-5 rounded-[25px] mb-6 shadow-inner">
-                <label class="text-[10px] font-black text-blue-500 uppercase block mb-2 px-1">Nuevo Botón Promo</label>
+            <div class="bg-blue-50 p-5 rounded-[25px] mb-6 shadow-inner text-center">
+                <label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Nuevo Botón Promo</label>
                 <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm text-sm">
                 <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0 shadow-sm text-sm">
-                <p class="text-[10px] font-black text-gray-500 uppercase mb-3 text-center tracking-widest">Receta (Letras Negras)</p>
+                <p class="text-[10px] font-black text-gray-500 uppercase mb-3 tracking-widest">Receta (Selecciona helados)</p>
+                <!-- CONTADORES CON LETRAS NEGRAS -->
                 <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-6"></div>
                 <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black btn-press shadow-lg">Crear Botón</button>
             </div>
@@ -101,10 +107,10 @@
         </div>
     </div>
 
-    <!-- MODAL BITACORA, HISTORIAL, PAGO -->
-    <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4 text-gray-800">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600">Cerrar</button></div></div>
-    <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl text-center"><h3 class="text-2xl font-black mb-6 text-gray-800">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600">Cerrar</button></div></div>
-    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center text-gray-800">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 text-center uppercase">Cancelar</button></div></div></div>
+    <!-- MODALES AUXILIARES -->
+    <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4 text-gray-800">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600 text-sm">Cerrar</button></div></div>
+    <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6 text-gray-800">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600 text-sm">Cerrar</button></div></div>
+    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50 text-center"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-gray-800">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 uppercase text-sm">Cancelar</button></div></div></div>
 
     <script>
         // --- CONFIGURACIÓN ---
@@ -112,6 +118,7 @@
         
         const tipos = ['V4','C4','V6','C6','V8','C8','V16','C16','V32','C32'];
         const nombresMap = {'V':'Vainilla','C':'Chocolate','4':'4oz','6':'6oz','8':'8oz','16':'16oz','32':'32oz'};
+        
         let carrito = []; let pagActual = 0; let descuentoPct = 0;
         let seleccionLibre = {}; let recetaPromoNueva = {};
         tipos.forEach(t => { seleccionLibre[t] = 0; recetaPromoNueva[t] = 0; });
@@ -129,12 +136,18 @@
                 {n:'Vainilla 16oz', id:'V16', p:110, c:'blue-600'}, {n:'Choco 16oz', id:'C16', p:130, c:'orange-950'},
                 {n:'Vainilla 32oz', id:'V32', p:200, c:'blue-800'}, {n:'Choco 32oz', id:'C32', p:230, c:'black'}
             ];
-            document.getElementById('gridMainProductos').innerHTML = prods.map(p => `<button onclick="add('${p.id}', ${p.p})" class="apple-card p-4 btn-press text-left border-l-8 border-${p.c}"><div class="text-${p.c} font-black text-[9px] uppercase">${p.n}</div><div class="text-xl font-black">$${p.p}</div></button>`).join('');
+            document.getElementById('gridMainProductos').innerHTML = prods.map(p => `
+                <button onclick="add('${p.id}', ${p.p})" class="apple-card p-4 btn-press text-left border-l-8 border-${p.c}">
+                    <div class="text-${p.c} font-black text-[9px] uppercase">${p.n}</div>
+                    <div class="text-xl font-black">$${p.p}</div>
+                </button>
+            `).join('');
         }
 
+        // --- LÓGICA DE VENTA ---
         function add(tipo, precio, receta = null) {
             const pVal = Number(precio);
-            if(isNaN(pVal)) return alert("Error de precio");
+            if(isNaN(pVal)) return alert("Error en el precio");
             carrito.push({ tipo, precio: pVal, receta });
             actualizarUI();
         }
@@ -143,23 +156,38 @@
             let base = carrito.reduce((a, b) => a + b.precio, 0);
             let total = base - (base * descuentoPct / 100);
             document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Esperando...");
+            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Esperando productos...");
         }
 
         function finalizar(metodo) {
             let base = carrito.reduce((a, b) => a + b.precio, 0);
             let totalV = base - (base * descuentoPct / 100);
-            if(metodo === 'Efectivo') db.dinero.efec += totalV; else if(metodo === 'Terminal') db.dinero.term += totalV; else db.dinero.tran += totalV;
+            if(metodo === 'Efectivo') db.dinero.efec += totalV; 
+            else if(metodo === 'Terminal') db.dinero.term += totalV; 
+            else db.dinero.tran += totalV;
+
             carrito.forEach(item => {
-                if(db.inv.hasOwnProperty(item.tipo)) { db.inv[item.tipo]++; if(metodo==='Terminal') db.term[item.tipo]++; if(metodo==='Transferencia') db.tran[item.tipo]++; }
-                if(item.receta) { for(let h in item.receta) { let cant = item.receta[h]; db.inv[h]+=cant; db.promo[h]+=cant; if(metodo==='Terminal') db.term[h]+=cant; if(metodo==='Transferencia') db.tran[h]+=cant; } }
+                if(db.inv.hasOwnProperty(item.tipo)) { 
+                    db.inv[item.tipo]++; 
+                    if(metodo==='Terminal') db.term[item.tipo]++; 
+                    if(metodo==='Transferencia') db.tran[item.tipo]++; 
+                }
+                if(item.receta) { 
+                    for(let h in item.receta) { 
+                        let cant = item.receta[h]; db.inv[h]+=cant; db.promo[h]+=cant; 
+                        if(metodo==='Terminal') db.term[h]+=cant; 
+                        if(metodo==='Transferencia') db.tran[h]+=cant; 
+                    } 
+                }
             });
             db.bitacora.push({ hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), monto: totalV, metodo, detalle: carrito.map(i=>i.tipo).join(',') });
             guardarDB(); carrito = []; descuentoPct = 0; actualizarUI(); cerrarModal('modalPago');
         }
 
+        // --- RENDERIZADO DE MODALES ---
         function renderContadores() {
-            const cL = document.getElementById('contenedorContadores'); const cP = document.getElementById('contadoresPromo');
+            const cL = document.getElementById('contenedorContadores'); 
+            const cP = document.getElementById('contadoresPromo');
             cL.innerHTML = ""; cP.innerHTML = "";
             tipos.forEach(t => {
                 cL.innerHTML += `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl"><span class="font-black text-gray-700">${t}</span><div class="flex items-center gap-4"><button onclick="cambiarLibre('${t}', -1)" class="counter-btn">-</button><span id="libCount${t}" class="font-black">0</span><button onclick="cambiarLibre('${t}', 1)" class="counter-btn text-blue-500">+</button></div></div>`;
@@ -167,50 +195,56 @@
             });
         }
 
-        function guardarNuevaPromo() {
-            let n = document.getElementById('pNom').value; let p = Number(document.getElementById('pPre').value);
-            if(n && p) {
-                db.promosConfig.push({ nombre: n, precio: p, receta: {...recetaPromoNueva} });
-                tipos.forEach(t => recetaPromoNueva[t] = 0);
-                guardarDB(); renderPromosMain(); renderContadores();
-                document.getElementById('pNom').value = ""; document.getElementById('pPre').value = "";
-                alert("¡Botón creado!");
-            }
-        }
-
-        function renderPromosMain() {
-            const g = document.getElementById('gridPromos'); g.innerHTML = "";
-            db.promosConfig.forEach((p, idx) => {
-                g.innerHTML += `<button onclick="add('${p.nombre}', ${p.precio}, ${JSON.stringify(p.receta).replace(/"/g, '&quot;')})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm"><span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${p.precio.toFixed(2)}</b></button>`;
-            });
-        }
-
         function renderResumen() {
-            const cont = document.getElementById('resumenContent'); document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
+            const cont = document.getElementById('resumenContent');
+            const pagiLabel = document.getElementById('pagiLabel');
+            pagiLabel.innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
-            if(pagActual === 0) { h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-[10px] text-center tracking-widest'>Inventario Real</h4><div class='grid grid-cols-2 gap-2'>"; tipos.forEach(t => { h += `<div class="bg-gray-50 p-2 rounded-xl inv-item text-center"><b>${t}:</b> ${db.inv[t] || 0}</div>`; }); h += "</div>"; }
-            else if(pagActual === 1) { h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-[10px] text-center tracking-widest'>Ventas Promo</h4><div class='grid grid-cols-2 gap-2'>"; tipos.forEach(t => { h += `<div class="bg-purple-50 p-2 rounded-xl inv-item text-center text-purple-900"><b>P-${t}:</b> ${db.promo[t] || 0}</div>`; }); h += "</div>"; }
-            else if(pagActual === 2) { h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-[10px] text-center tracking-widest'>Detalle Métodos</h4><div class='space-y-2'>"; tipos.forEach(t => { if(db.inv[t]>0) h += `<div class="bg-white border p-2 rounded-lg text-xs flex justify-between"><b>${t}</b><span>Ef: ${(db.inv[t]-db.term[t]-db.tran[t])} | Tr: ${db.tran[t]} | Te: ${db.term[t]}</span></div>`; }); h += "</div>"; }
-            else if(pagActual === 3) h = "<div class='py-10 text-center'><h4 class='font-black text-green-500 mb-6 uppercase text-[10px] tracking-widest'>Caja Bruta</h4><p class='text-3xl font-black mb-2 text-gray-800'>Efec: <b class='text-green-600'>$"+db.dinero.efec.toFixed(2)+"</b></p><p class='text-3xl font-black text-gray-800'>Term: <b class='text-blue-600'>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
-            else h = "<div class='py-10 text-center'><h4 class='font-black text-red-500 mb-6 uppercase text-[10px] tracking-widest'>Neto Final</h4><p class='text-6xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p></div>";
+            
+            // PAGINA 1: INVENTARIO REAL
+            if(pagActual === 0) {
+                h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-[10px] tracking-widest'>Inventario Real</h4><div class='grid grid-cols-2 gap-2'>";
+                tipos.forEach(t => { h += `<div class="bg-gray-50 p-2 rounded-xl inv-item"><b>${t}:</b> ${db.inv[t] || 0}</div>`; });
+                h += "</div>";
+            }
+            // PAGINA 2: VENTAS PROMO
+            else if(pagActual === 1) {
+                h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-[10px] tracking-widest'>Ventas Promo</h4><div class='grid grid-cols-2 gap-2'>";
+                tipos.forEach(t => { h += `<div class="bg-purple-50 p-2 rounded-xl inv-item text-purple-900"><b>P-${t}:</b> ${db.promo[t] || 0}</div>`; });
+                h += "</div>";
+            }
+            // PAGINA 3: DETALLE POR METODO
+            else if(pagActual === 2) {
+                h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-[10px] tracking-widest'>Detalle Métodos</h4><div class='space-y-2 text-left'>";
+                let soldAny = false;
+                tipos.forEach(t => {
+                    if(db.inv[t]>0) {
+                        soldAny = true;
+                        h += `<div class="bg-white border p-2 rounded-lg text-[10px] flex justify-between"><b>${t}</b><span>Ef: ${(db.inv[t]-db.term[t]-db.tran[t])} | Tr: ${db.tran[t]} | Te: ${db.term[t]}</span></div>`;
+                    }
+                });
+                if(!soldAny) h += "<p class='text-gray-300 py-10'>Sin ventas registradas</p>";
+                h += "</div>";
+            }
+            // PAGINA 4: CAJA BRUTA (CORREGIDA)
+            else if(pagActual === 3) {
+                h = `<div class='py-10 text-center'><h4 class='font-black text-green-500 mb-6 uppercase text-[10px] tracking-widest'>Caja Bruta</h4>
+                    <p class='text-3xl font-black mb-2 text-gray-800'>Efec: <b class='text-green-600'>$${db.dinero.efec.toFixed(2)}</b></p>
+                    <p class='text-3xl font-black text-gray-800 mb-2'>Term: <b class='text-blue-600'>$${db.dinero.term.toFixed(2)}</b></p>
+                    <p class='text-xl font-bold text-gray-400'>Transfer: $${db.dinero.tran.toFixed(2)}</p>
+                </div>`;
+            }
+            // PAGINA 5: NETO FINAL
+            else {
+                let neto = (db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176));
+                h = `<div class='py-10 text-center'><h4 class='font-black text-red-500 mb-6 uppercase text-[10px] tracking-widest'>Neto Final</h4>
+                    <p class='text-6xl font-black text-green-600'>$${neto.toFixed(2)}</p>
+                </div>`;
+            }
             cont.innerHTML = h;
         }
 
-        function abrirConfirmReset() {
-            if(confirm("¿Enviar a Google Sheets?")) {
-                const hoy = new Date().toLocaleDateString();
-                let filas = tipos.map(t => {
-                    let tot = db.inv[t]||0, ter = db.term[t]||0, tra = db.tran[t]||0;
-                    return { fecha: hoy, sabor: nombresMap[t.charAt(0)], tamano: nombresMap[t.substring(1)], efectivo: tot-ter-tra, transferencia: tra, terminal: ter, total: tot };
-                });
-                fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "CIERRE_ESTRUCTURADO", filas: filas }) }).then(() => {
-                    db.reportesPasados.push({ fecha: hoy, total: (db.dinero.efec + db.dinero.term + db.dinero.tran) });
-                    tipos.forEach(t => { db.inv[t]=0; db.promo[t]=0; db.term[t]=0; db.tran[t]=0; });
-                    db.dinero = { efec:0, term:0, tran:0 }; db.bitacora = []; guardarDB(); location.reload();
-                });
-            }
-        }
-
+        // --- FUNCIONES DE CONTROL ---
         function guardarDB() { localStorage.setItem('heladeria_v8_final', JSON.stringify(db)); }
         function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
         function cambiarPagina(d) { pagActual = Math.max(0, Math.min(4, pagActual + d)); renderResumen(); }
@@ -225,8 +259,47 @@
         function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-4 border-l-8 border-blue-500 mb-1 text-sm text-left"><b>${v.hora} - $${v.monto.toFixed(2)}</b> (${v.metodo})<br><small class="text-gray-400">${v.detalle}</small></div>`; }); }
         function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; const cont = document.getElementById('listaDias'); cont.innerHTML = ""; db.reportesPasados.slice().reverse().forEach(r => { cont.innerHTML += `<div class="bg-gray-100 p-4 rounded-xl mb-1 text-xs text-left"><b>${r.fecha}</b> - Neto: $${r.total.toFixed(2)}</div>`; }); }
         function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
-        function renderListaGestion() { const l = document.getElementById('listaPromosGestion'); l.innerHTML = ""; db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre} ($${p.precio})</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();abrirAjustes();" class="text-red-500 font-black">Quitar</button></div>`; }); }
 
+        function guardarNuevaPromo() {
+            let n = document.getElementById('pNom').value; 
+            let pVal = Number(document.getElementById('pPre').value);
+            if(n && pVal > 0) {
+                db.promosConfig.push({ nombre: n, precio: pVal, receta: {...recetaPromoNueva} });
+                tipos.forEach(t => recetaPromoNueva[t] = 0);
+                guardarDB(); renderPromosMain(); renderContadores();
+                document.getElementById('pNom').value = ""; document.getElementById('pPre').value = "";
+                alert("¡Botón creado!");
+            }
+        }
+
+        function renderPromosMain() {
+            const g = document.getElementById('gridPromos'); g.innerHTML = "";
+            db.promosConfig.forEach((p, idx) => {
+                g.innerHTML += `<button onclick="add('${p.nombre}', ${p.precio}, ${JSON.stringify(p.receta).replace(/"/g, '&quot;')})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm"><span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${p.precio.toFixed(2)}</b></button>`;
+            });
+        }
+
+        function renderListaGestion() {
+            const l = document.getElementById('listaPromosGestion'); l.innerHTML = "";
+            db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre} ($${p.precio})</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">Quitar</button></div>`; });
+        }
+
+        function abrirConfirmReset() {
+            if(confirm("¿Cerrar día y enviar a la Nube?")) {
+                const hoy = new Date().toLocaleDateString();
+                let filas = tipos.map(t => {
+                    let tot = db.inv[t]||0, ter = db.term[t]||0, tra = db.tran[t]||0;
+                    return { fecha: hoy, sabor: nombresMap[t.charAt(0)], tamano: nombresMap[t.substring(1)], efectivo: tot-ter-tra, transferencia: tra, terminal: ter, total: tot };
+                });
+                fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "CIERRE_ESTRUCTURADO", filas: filas }) }).then(() => {
+                    db.reportesPasados.push({ fecha: hoy, total: (db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)) });
+                    tipos.forEach(t => { db.inv[t]=0; db.promo[t]=0; db.term[t]=0; db.tran[t]=0; });
+                    db.dinero = { efec:0, term:0, tran:0 }; db.bitacora = []; guardarDB(); location.reload();
+                });
+            }
+        }
+
+        // Iniciar
         renderBotonesPrincipales();
         renderPromosMain();
     </script>
