@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v7.2</title>
+    <title>Heladería POS Pro v7.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
         .apple-card { background: white; border-radius: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .btn-press:active { transform: scale(0.96); background-color: #e5e5ea; }
         .modal-bg { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
-        .counter-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 10px; font-weight: bold; }
+        .counter-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; font-weight: bold; }
         .scroll-beauty::-webkit-scrollbar { width: 4px; }
         .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
     </style>
@@ -46,7 +46,6 @@
 
         <!-- BOTONES DE PRODUCTOS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <!-- 4oz -->
             <button onclick="add('V4', 35)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-300">
                 <div class="text-blue-400 font-black text-[9px] uppercase">Vainilla 4oz</div>
                 <div class="text-xl font-black">$35</div>
@@ -55,7 +54,6 @@
                 <div class="text-orange-700 font-black text-[9px] uppercase">Choco 4oz</div>
                 <div class="text-xl font-black">$35</div>
             </button>
-            <!-- 6oz -->
             <button onclick="add('V6', 45)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-400">
                 <div class="text-blue-500 font-black text-[9px] uppercase">Vainilla 6oz</div>
                 <div class="text-xl font-black">$45</div>
@@ -64,7 +62,6 @@
                 <div class="text-orange-800 font-black text-[9px] uppercase">Choco 6oz</div>
                 <div class="text-xl font-black">$45</div>
             </button>
-            <!-- 8oz -->
             <button onclick="add('V8', 60)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-500">
                 <div class="text-blue-500 font-black text-[9px] uppercase">Vainilla 8oz</div>
                 <div class="text-xl font-black">$60</div>
@@ -73,7 +70,6 @@
                 <div class="text-orange-900 font-black text-[9px] uppercase">Choco 8oz</div>
                 <div class="text-xl font-black">$60</div>
             </button>
-            <!-- 16oz -->
             <button onclick="add('V16', 110)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-600">
                 <div class="text-blue-600 font-black text-[9px] uppercase">Vainilla 16oz</div>
                 <div class="text-xl font-black">$110</div>
@@ -82,10 +78,10 @@
                 <div class="text-orange-950 font-black text-[9px] uppercase">Choco 16oz</div>
                 <div class="text-xl font-black">$130</div>
             </button>
-            <!-- 32oz -->
-            <button onclick="add('V32', 210)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-800">
+            <!-- PRECIO CORREGIDO V32 A $200 -->
+            <button onclick="add('V32', 200)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-800">
                 <div class="text-blue-800 font-black text-[9px] uppercase">Vainilla 32oz</div>
-                <div class="text-xl font-black">$210</div>
+                <div class="text-xl font-black">$200</div>
             </button>
             <button onclick="add('C32', 230)" class="apple-card p-4 btn-press text-left border-l-8 border-black">
                 <div class="text-black font-black text-[9px] uppercase">Choco 32oz</div>
@@ -102,10 +98,10 @@
         <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-2xl btn-press z-10 uppercase tracking-widest">Ver Resumen Hoy</button>
     </div>
 
-    <!-- MODAL VENTA LIBRE -->
+    <!-- MODAL VENTA LIBRE / ESPECIAL -->
     <div id="modalVentaLibre" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-8 pb-2 border-b text-center">
+            <div class="p-8 pb-2 text-center">
                 <h3 class="text-2xl font-black">Venta Especial</h3>
                 <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Selecciona helados y precio</p>
             </div>
@@ -113,30 +109,29 @@
             <div class="p-8 pt-4 border-t bg-gray-50 rounded-b-[35px]">
                 <input id="libMonto" type="number" placeholder="Precio $" class="w-full p-5 bg-white text-blue-600 font-black rounded-2xl border-0 shadow-inner text-center text-3xl mb-4">
                 <button onclick="confirmarVentaLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Confirmar</button>
-                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-gray-400 font-bold mt-1 uppercase text-xs">Cancelar</button>
+                <!-- CANCELAR EN ROJO -->
+                <button onclick="cerrarModal('modalVentaLibre')" class="w-full py-4 text-red-500 font-black mt-1 uppercase text-xs">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL AJUSTES -->
-    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty">
-            <h3 class="text-2xl font-black mb-6">Ajustes</h3>
-            <div class="bg-blue-50 p-5 rounded-[25px] mb-6">
-                <label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nueva Promo</label>
-                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0">
-                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0">
-                <p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p>
-                <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div>
-                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button>
+    <!-- MODAL RESUMEN -->
+    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center">
+            <div id="resumenContent" class="min-h-[300px] flex flex-col justify-center"></div>
+            <div class="flex justify-between items-center mt-8 px-2">
+                <button onclick="cambiarPagina(-1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">←</button>
+                <span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">1 / 5</span>
+                <button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button>
             </div>
-            <div id="listaPromosGestion" class="space-y-2 mb-6"></div>
-            <button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs text-center">Cerrar</button>
+            <!-- CERRAR CAJA EN ROJO -->
+            <button onclick="abrirConfirmReset()" class="w-full mt-10 text-sm text-red-600 font-black uppercase tracking-tighter">Cerrar Caja y Guardar Día</button>
+            <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button>
         </div>
     </div>
 
-    <!-- OTROS MODALES -->
-    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center"><div id="resumenContent" class="min-h-[300px] flex flex-col justify-center"></div><div class="flex justify-between items-center mt-8 px-2"><button onclick="cambiarPagina(-1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">←</button><span id="pagiLabel" class="font-black text-gray-300 text-xs uppercase">1 / 5</span><button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button></div><button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase">Cerrar Caja y Guardar Día</button><button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button></div></div>
+    <!-- OTROS MODALES (Ajustes, Pago, etc) -->
+    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-6"><label class="text-[10px] font-black text-blue-400 uppercase block mb-2">Nueva Promo</label><input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0"><input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0"><p class="text-[10px] font-black text-gray-400 uppercase mb-3 text-center">Receta (Descuento Inventario)</p><div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-4"></div><button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">Crear Botón</button></div><div id="listaPromosGestion" class="space-y-2 mb-6"></div><button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs text-center">Cerrar</button></div></div>
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black mt-2">Cancelar</button></div></div></div>
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
@@ -150,7 +145,6 @@
         let seleccionLibre = {};
         let recetaPromoNueva = {};
 
-        // Inicializar objetos de medidas
         tipos.forEach(t => { seleccionLibre[t] = 0; recetaPromoNueva[t] = 0; });
 
         let db = JSON.parse(localStorage.getItem('heladeria_v7_final')) || {
@@ -159,7 +153,6 @@
             bitacora: [], promosConfig: [], reportesPasados: []
         };
 
-        // Asegurar que la DB tenga todas las medidas
         tipos.forEach(t => {
             if (db.inv[t] === undefined) db.inv[t] = 0;
             if (db.promo[t] === undefined) db.promo[t] = 0;
@@ -192,31 +185,17 @@
             let base = carrito.reduce((a, b) => a + Number(b.precio), 0);
             let totalV = base - (base * descuentoPct / 100);
             const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
             if(metodo === 'Efectivo') db.dinero.efec += totalV;
             else if(metodo === 'Terminal') db.dinero.term += totalV;
             else db.dinero.tran += totalV;
-
             carrito.forEach(item => {
-                if(db.inv.hasOwnProperty(item.tipo)) { 
-                    db.inv[item.tipo]++; 
-                    if(metodo === 'Terminal') db.term[item.tipo]++;
-                }
-                if(item.receta) { 
-                    for(let h in item.receta) { 
-                        let c = item.receta[h];
-                        db.inv[h] += c; db.promo[h] += c; 
-                        if(metodo === 'Terminal') db.term[h] += c; 
-                    } 
-                }
+                if(db.inv.hasOwnProperty(item.tipo)) { db.inv[item.tipo]++; if(metodo === 'Terminal') db.term[item.tipo]++; }
+                if(item.receta) { for(let h in item.receta) { let c = item.receta[h]; db.inv[h] += c; db.promo[h] += c; if(metodo === 'Terminal') db.term[h] += c; } }
             });
-
             db.bitacora.push({ hora, monto: totalV, metodo, detalle: carrito.map(i=>i.tipo).join(',') });
             guardarDB(); carrito = []; descuentoPct = 0; actualizarUI(); cerrarModal('modalPago');
         }
 
-        function cambiarRecetaPromo(t, c) { recetaPromoNueva[t] = Math.max(0, recetaPromoNueva[t] + c); document.getElementById('receta'+t).innerText = recetaPromoNueva[t]; }
-        
         function guardarNuevaPromo() {
             let n = document.getElementById('pNom').value;
             let p = document.getElementById('pPre').value;
@@ -242,7 +221,8 @@
             });
         }
 
-        function cambiarLibre(t, c) { seleccionLibre[t] = Math.max(0, seleccionLibre[t] + c); document.getElementById('libCount'+t).innerText = seleccionLibre[t]; }
+        function cambiarLibre(t, c) { seleccionLibre[t] = Math.max(0, seleccionLibre[t] + c); if(document.getElementById('libCount'+t)) document.getElementById('libCount'+t).innerText = seleccionLibre[t]; }
+        function cambiarRecetaPromo(t, c) { recetaPromoNueva[t] = Math.max(0, recetaPromoNueva[t] + c); document.getElementById('receta'+t).innerText = recetaPromoNueva[t]; }
         function confirmarVentaLibre() { const m = parseFloat(document.getElementById('libMonto').value); if(!m) return; add("Especial", m, {...seleccionLibre}); cerrarModal('modalVentaLibre'); }
         function guardarDB() { localStorage.setItem('heladeria_v7_final', JSON.stringify(db)); }
         function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -256,10 +236,11 @@
             const cont = document.getElementById('resumenContent');
             document.getElementById('pagiLabel').innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
-            if(pagActual === 0) h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Real</h4><div class='grid grid-cols-2 gap-2 text-left text-xs'>" + Object.entries(db.inv).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 1) h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>En Promo</h4><div class='grid grid-cols-2 gap-2 text-left text-xs'>" + Object.entries(db.promo).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 2) h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-2 text-left text-xs'>" + Object.entries(db.term).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
-            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Bruto</h4><div class='space-y-4 text-xl'><p>Efec: <b>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
+            // TEXTO DE INVENTARIO LIGERAMENTE MÁS GRANDE (text-lg)
+            if(pagActual === 0) h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-xs'>Inventario Real</h4><div class='grid grid-cols-2 gap-2 text-left text-lg'>" + Object.entries(db.inv).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 1) h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-xs'>En Promo</h4><div class='grid grid-cols-2 gap-2 text-left text-lg'>" + Object.entries(db.promo).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>P-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 2) h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-xs'>Vendido Tarjeta</h4><div class='grid grid-cols-2 gap-2 text-left text-lg'>" + Object.entries(db.term).filter(e=>e[1]>0).map(e => "<div class='bg-gray-50 p-2 rounded-lg'><b>T-"+e[0]+"</b>: "+e[1]+"</div>").join('') + "</div>";
+            else if(pagActual === 3) h = "<h4 class='font-black text-green-500 mb-8 uppercase text-xs'>Bruto</h4><div class='space-y-4 text-2xl'><p>Efec: <b>$"+db.dinero.efec.toFixed(2)+"</b></p><p>Term: <b>$"+db.dinero.term.toFixed(2)+"</b></p></div>";
             else h = "<h4 class='font-black text-red-500 mb-6 uppercase text-xs'>Neto</h4><p class='text-4xl font-black text-green-600'>$"+(db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176)).toFixed(2)+"</p>";
             cont.innerHTML = h || "Sin datos";
         }
