@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS v8.4</title>
+    <title>Heladería POS v8.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -94,27 +94,26 @@
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
             <h3 class="text-2xl font-black mb-6 text-center text-gray-800">Ajustes</h3>
             <div class="bg-blue-50 p-5 rounded-[25px] mb-6 shadow-inner text-center">
-                <label class="text-[10px] font-black text-blue-500 uppercase block mb-2">Nuevo Botón Promo</label>
-                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm text-sm">
+                <label class="text-[10px] font-black text-blue-500 uppercase block mb-2 px-1 text-left">Nuevo Botón Promo</label>
+                <input id="pNom" type="text" placeholder="Nombre (ej. Combo)" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm text-sm">
                 <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0 shadow-sm text-sm">
                 <p class="text-[10px] font-black text-gray-500 uppercase mb-3 tracking-widest">Receta (Selecciona helados)</p>
-                <!-- CONTADORES CON LETRAS NEGRAS -->
                 <div id="contadoresPromo" class="grid grid-cols-2 gap-2 mb-6"></div>
-                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black btn-press shadow-lg">Crear Botón</button>
+                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black btn-press shadow-lg text-sm uppercase">Crear Botón</button>
             </div>
             <div id="listaPromosGestion" class="space-y-2 mb-6 px-1"></div>
             <button onclick="cerrarModal('modalAjustes')" class="w-full py-4 text-red-500 font-black uppercase text-xs text-center tracking-widest">Cerrar Ajustes</button>
         </div>
     </div>
 
-    <!-- MODALES AUXILIARES -->
+    <!-- MODALES EXTRAS -->
     <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4 text-gray-800">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600 text-sm">Cerrar</button></div></div>
     <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4 text-center"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6 text-gray-800">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4 text-gray-600 text-sm">Cerrar</button></div></div>
     <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50 text-center"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-gray-800">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-4 text-red-500 font-black mt-2 uppercase text-sm">Cancelar</button></div></div></div>
 
     <script>
         // --- CONFIGURACIÓN ---
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxobkDSb1M8eHAIWv6xpGMZBzRj8jEXViqh1jF4sdYpVxq4SOzjPGI3mLeXnw6ESguJ/exec"; 
+        const WEB_APP_URL = "URL_DE_TU_SCRIPT_AQUI"; 
         
         const tipos = ['V4','C4','V6','C6','V8','C8','V16','C16','V32','C32'];
         const nombresMap = {'V':'Vainilla','C':'Chocolate','4':'4oz','6':'6oz','8':'8oz','16':'16oz','32':'32oz'};
@@ -131,7 +130,7 @@
         function renderBotonesPrincipales() {
             const prods = [
                 {n:'Vainilla 4oz', id:'V4', p:35, c:'blue-300'}, {n:'Choco 4oz', id:'C4', p:35, c:'orange-700'},
-                {n:'Vainilla 6oz', id:'V6', p:45, c:'blue-400'}, {n:'Choco 6oz', id:'C6', p:45, c:'orange-800'},
+                {n:'Vainilla 6oz', id:'V6', p:50, c:'blue-400'}, {n:'Choco 6oz', id:'C6', p:50, c:'orange-800'},
                 {n:'Vainilla 8oz', id:'V8', p:60, c:'blue-500'}, {n:'Choco 8oz', id:'C8', p:60, c:'orange-900'},
                 {n:'Vainilla 16oz', id:'V16', p:110, c:'blue-600'}, {n:'Choco 16oz', id:'C16', p:130, c:'orange-950'},
                 {n:'Vainilla 32oz', id:'V32', p:200, c:'blue-800'}, {n:'Choco 32oz', id:'C32', p:230, c:'black'}
@@ -147,7 +146,7 @@
         // --- LÓGICA DE VENTA ---
         function add(tipo, precio, receta = null) {
             const pVal = Number(precio);
-            if(isNaN(pVal)) return alert("Error en el precio");
+            if(isNaN(pVal)) return alert("Error de precio");
             carrito.push({ tipo, precio: pVal, receta });
             actualizarUI();
         }
@@ -184,7 +183,7 @@
             guardarDB(); carrito = []; descuentoPct = 0; actualizarUI(); cerrarModal('modalPago');
         }
 
-        // --- RENDERIZADO DE MODALES ---
+        // --- RENDERIZADO ---
         function renderContadores() {
             const cL = document.getElementById('contenedorContadores'); 
             const cP = document.getElementById('contadoresPromo');
@@ -197,36 +196,27 @@
 
         function renderResumen() {
             const cont = document.getElementById('resumenContent');
-            const pagiLabel = document.getElementById('pagiLabel');
-            pagiLabel.innerText = "Pág " + (pagActual + 1) + " / 5";
+            const pLabel = document.getElementById('pagiLabel');
+            pLabel.innerText = "Pág " + (pagActual + 1) + " / 5";
             let h = "";
             
-            // PAGINA 1: INVENTARIO REAL
             if(pagActual === 0) {
                 h = "<h4 class='font-black text-blue-500 mb-4 uppercase text-[10px] tracking-widest'>Inventario Real</h4><div class='grid grid-cols-2 gap-2'>";
                 tipos.forEach(t => { h += `<div class="bg-gray-50 p-2 rounded-xl inv-item"><b>${t}:</b> ${db.inv[t] || 0}</div>`; });
                 h += "</div>";
             }
-            // PAGINA 2: VENTAS PROMO
             else if(pagActual === 1) {
                 h = "<h4 class='font-black text-purple-500 mb-4 uppercase text-[10px] tracking-widest'>Ventas Promo</h4><div class='grid grid-cols-2 gap-2'>";
                 tipos.forEach(t => { h += `<div class="bg-purple-50 p-2 rounded-xl inv-item text-purple-900"><b>P-${t}:</b> ${db.promo[t] || 0}</div>`; });
                 h += "</div>";
             }
-            // PAGINA 3: DETALLE POR METODO
             else if(pagActual === 2) {
-                h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-[10px] tracking-widest'>Detalle Métodos</h4><div class='space-y-2 text-left'>";
-                let soldAny = false;
+                h = "<h4 class='font-black text-orange-500 mb-4 uppercase text-[10px] tracking-widest text-center'>Detalle Métodos</h4><div class='space-y-2 text-left'>";
                 tipos.forEach(t => {
-                    if(db.inv[t]>0) {
-                        soldAny = true;
-                        h += `<div class="bg-white border p-2 rounded-lg text-[10px] flex justify-between"><b>${t}</b><span>Ef: ${(db.inv[t]-db.term[t]-db.tran[t])} | Tr: ${db.tran[t]} | Te: ${db.term[t]}</span></div>`;
-                    }
+                    if(db.inv[t] > 0) h += `<div class="bg-white border p-2 rounded-lg text-[10px] flex justify-between"><b>${t}</b><span>Ef: ${(db.inv[t]-db.term[t]-db.tran[t])} | Tr: ${db.tran[t]} | Te: ${db.term[t]}</span></div>`;
                 });
-                if(!soldAny) h += "<p class='text-gray-300 py-10'>Sin ventas registradas</p>";
                 h += "</div>";
             }
-            // PAGINA 4: CAJA BRUTA (CORREGIDA)
             else if(pagActual === 3) {
                 h = `<div class='py-10 text-center'><h4 class='font-black text-green-500 mb-6 uppercase text-[10px] tracking-widest'>Caja Bruta</h4>
                     <p class='text-3xl font-black mb-2 text-gray-800'>Efec: <b class='text-green-600'>$${db.dinero.efec.toFixed(2)}</b></p>
@@ -234,12 +224,9 @@
                     <p class='text-xl font-bold text-gray-400'>Transfer: $${db.dinero.tran.toFixed(2)}</p>
                 </div>`;
             }
-            // PAGINA 5: NETO FINAL
             else {
                 let neto = (db.dinero.efec + db.dinero.term + db.dinero.tran - (db.dinero.term * 0.04176));
-                h = `<div class='py-10 text-center'><h4 class='font-black text-red-500 mb-6 uppercase text-[10px] tracking-widest'>Neto Final</h4>
-                    <p class='text-6xl font-black text-green-600'>$${neto.toFixed(2)}</p>
-                </div>`;
+                h = `<div class='py-10 text-center'><h4 class='font-black text-red-500 mb-6 uppercase text-[10px] tracking-widest'>Neto Final</h4><p class='text-6xl font-black text-green-600'>$${neto.toFixed(2)}</p></div>`;
             }
             cont.innerHTML = h;
         }
@@ -281,7 +268,7 @@
 
         function renderListaGestion() {
             const l = document.getElementById('listaPromosGestion'); l.innerHTML = "";
-            db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre} ($${p.precio})</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">Quitar</button></div>`; });
+            db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mb-1 text-xs"><span>${p.nombre} ($${p.precio})</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();abrirAjustes();" class="text-red-500 font-black">Quitar</button></div>`; });
         }
 
         function abrirConfirmReset() {
@@ -299,7 +286,6 @@
             }
         }
 
-        // Iniciar
         renderBotonesPrincipales();
         renderPromosMain();
     </script>
